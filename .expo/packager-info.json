@@ -3,7 +3,7 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerNgrokUrl": "https://jq-qvc.yaniss.air19e2.exp.direct",
+  "packagerNgrokUrl": "https://packager.jq-qvc.yaniss.air19e2.exp.direct",
+  "ngrokPid": 24944
 }
