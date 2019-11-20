@@ -6,8 +6,6 @@ import Home from '../src/home/home';
 
 export const BottomNavigator = (props) => {
   const onTabSelect = (selectedIndex) => {
-    console.log(selectedIndex);
-    console.log(props.navigation);
     const routes = props.navigation.state.routes;
     const selectedRoute = routes[selectedIndex];
     props.navigation.navigate(selectedRoute.routeName);
