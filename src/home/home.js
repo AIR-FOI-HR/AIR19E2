@@ -54,17 +54,17 @@ export default class Home extends Component {
               data={data}
               renderItem={renderItem}>
             </List>
-            <BottomNavigation
+            {/* <BottomNavigation
               appearance='noIndicator'
               selectedIndex={this.state.selectedIndex}
               onSelect={this.onTabSelect}>
-              <BottomNavigationTab title='Settings' />
+              <BottomNavigationTab title='Profil' />
               <BottomNavigationTab title='Home' />
               <BottomNavigationTab title="New Event" />
-            </BottomNavigation>
+            </BottomNavigation> */}
           </View>
         </Layout>
-      </ApplicationProvider >
+      </ApplicationProvider>
     )
   }
 };
