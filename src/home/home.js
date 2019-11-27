@@ -14,12 +14,7 @@ const data = new Array(8).fill({
   description: 'Description'
 });
 
-const renderItem = ({ item, index }) => (
-  <ListItem
-    title={item.title ? `${item.title}` : `Item ${index}`}
-    description={item.description ? `${item.description}` : `This is item ${index}`}
-  ></ListItem>
-)
+
 
 export default class Home extends Component {
 
@@ -27,6 +22,14 @@ export default class Home extends Component {
     searchValue: '',
     selectedIndex: 1,
   }
+
+  renderItem = ({ item, index }) => (
+    <ListItem
+      title={item.title ? `${item.title}` : `Item ${index}`}
+      description={item.description ? `${item.description}` : `This is item ${index}`}
+      onPress={() => this.props.navigation.navigate('MealEvent')}
+    ></ListItem>
+  )
 
   onTabSelect = (selectedIndex) => {
     this.setState({ selectedIndex });
@@ -52,7 +55,8 @@ export default class Home extends Component {
               style={styles.list}
               contentContainerStyle={styles.contentContainer}
               data={data}
-              renderItem={renderItem}>
+              renderItem={this.renderItem}
+              >
             </List>
           </View>
         </Layout>

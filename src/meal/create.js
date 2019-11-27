@@ -6,34 +6,6 @@ import { ApplicationProvider, Layout, Button, Input, Text } from 'react-native-u
 import DateTimePicker from "react-native-modal-datetime-picker";
 import MapView from 'react-native-maps';
 
-const styles = StyleSheet.create({
-    container: {
-        height: '100%',
-        width: '100%'
-    },
-    input: {
-        marginHorizontal: 4,
-        marginTop: '5%'
-    },
-    button: {
-        marginVertical: 4,
-        marginHorizontal: 4,
-        width: '70%',
-        marginTop: '5%'
-    },
-    ScrollView: {
-        alignItems: 'center',
-        height: 1500,
-    },
-    map: {
-        width: '100%',
-        height: '100%',
-    },
-    buttonList: {
-        color: 'white',
-    }
-});
-
 const mode = 'datetime';
 
 export default class Create extends Component {
@@ -152,8 +124,8 @@ export default class Create extends Component {
         return (
             <ApplicationProvider mapping={mapping} theme={lightTheme}>
             <Layout style={styles.container}>
-                    <View style={{marginTop: "30%", height: '100%', alignItems: 'center'}}>
-                    <Text>Create your meal !</Text>
+                <View style={styles.view}>
+                    <Text style={{marginHorizontal: 4}}>Create your meal !</Text>
                     <ScrollView contentContainerStyle={styles.ScrollView}>
                         <Input
                             label='Title :'
@@ -271,3 +243,36 @@ export default class Create extends Component {
         )
     }
 };
+
+const styles = StyleSheet.create({
+    container: {
+        height: '100%',
+        width: '100%'
+    },
+    view: {
+        flex: 2,
+        alignItems: 'center',
+        marginTop: '5%'
+    },
+    input: {
+        marginHorizontal: 4,
+        marginTop: '5%'
+    },
+    button: {
+        marginVertical: 4,
+        marginHorizontal: 4,
+        width: '70%',
+        marginTop: '5%'
+    },
+    ScrollView: {
+        alignItems: 'center',
+        height: 1500,
+    },
+    map: {
+        width: '100%',
+        height: '100%',
+    },
+    buttonList: {
+        color: 'white',
+    }
+});

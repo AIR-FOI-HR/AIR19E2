@@ -7,13 +7,14 @@ import Home from '../src/home/home';
 import SignIn from '../src/login/signIn';
 import SignUp from '../src/login/signUp';
 import Create from '../src/meal/create';
+import MealEvent from '../src/meal/mealEvent';
 import { BottomNavigator } from './BottomNavigator';
 import Profil from '../src/login/profil';
 
 export const BottomTabNavigator = createBottomTabNavigator({
   Profil: Profil,
   Home: Home,
-  NewEvent: Profil
+  NewEvent: Create
 }, {
   initialRouteName: 'Home',
   tabBarComponent: BottomNavigator,
@@ -26,9 +27,10 @@ const MainNav = createStackNavigator({
 // }, {headerMode: 'none'});
   SignIn: { screen: SignIn },
   SignUp: { screen: SignUp },
+  Create: {screen: Create},
+  MealEvent: {screen: MealEvent},
   ['Home']: BottomTabNavigator,
 }, { headerMode: 'none' });
-    Create: {screen: Create},
 
 const App = createAppContainer(MainNav);
 
