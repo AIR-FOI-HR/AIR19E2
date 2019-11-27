@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableHighlight } from 'react-native';
+import { Text as TextN} from 'react-native';
 import { mapping } from '@eva-design/eva';
 import { light as lightTheme } from '@eva-design/eva';
 import { ApplicationProvider, Layout, Input, Icon, Text, Button } from 'react-native-ui-kitten';
@@ -70,9 +71,9 @@ export default class SignIn extends Component {
             <Button style={styles.button} status='info' onPress={() => this.props.navigation.navigate('Home')}>Sign In</Button>
             <Text appearance='hint' style={{ marginTop: '10%' }}>
               Don't have an account ? {" "}
-              <Text appearance='hint' style={{ textDecorationLine: 'underline' }}>
-                SIGN UP
-                            </Text>
+                <TextN style={{ textDecorationLine: 'underline' }} onPress={() => this.props.navigation.navigate('SignUp')}>
+                    SIGN UP
+                </TextN>
             </Text>
           </View>
         </Layout>
