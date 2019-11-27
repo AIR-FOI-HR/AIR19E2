@@ -7,9 +7,12 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import MapView from 'react-native-maps';
 
 const styles = StyleSheet.create({
+    container: {
+        height: '100%',
+        width: '100%'
+    },
     input: {
         marginHorizontal: 4,
-        width: '70%',
         marginTop: '5%'
     },
     button: {
@@ -148,7 +151,7 @@ export default class Create extends Component {
     render() {
         return (
             <ApplicationProvider mapping={mapping} theme={lightTheme}>
-                <Layout style={{height:'100%'}}>
+            <Layout style={styles.container}>
                     <View style={{marginTop: "30%", height: '100%', alignItems: 'center'}}>
                     <Text>Create your meal !</Text>
                     <ScrollView contentContainerStyle={styles.ScrollView}>
