@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Home from '../src/home/home';
 import SignIn from '../src/login/signIn';
 import SignUp from '../src/login/signUp';
+import Create from '../src/meal/create';
 import { BottomNavigator } from './BottomNavigator';
 import Profil from '../src/login/profil';
 
@@ -27,6 +28,7 @@ const MainNav = createStackNavigator({
   SignUp: { screen: SignUp },
   ['Home']: BottomTabNavigator,
 }, { headerMode: 'none' });
+    Create: {screen: Create},
 
 const App = createAppContainer(MainNav);
 
