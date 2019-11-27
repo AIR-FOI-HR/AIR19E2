@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "@eva-design/eva": "^1.2.0",
+    "@react-firebase/auth": "^0.2.10",
     "@ui-kitten/eva-icons": "^4.2.0",
     "expo": "^35.0.0",
+    "firebase": "^7.4.0",
     "react": "16.8.3",
     "react-dom": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
