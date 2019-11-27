@@ -6,8 +6,8 @@ import SignIn from '../src/login/signIn';
 import SignUp from '../src/login/signUp';
 
 const MainNav = createStackNavigator({
-    SignIn: {screen: SignIn},
     SignUp: {screen: SignUp},
+    SignIn: {screen: SignIn},
     Home: {screen: Home},
 }, {headerMode: 'none'});
 
