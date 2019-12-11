@@ -8,18 +8,18 @@ import { ApplicationProvider, Layout, Input, Icon, Text, Button } from 'react-na
 
 
 const styles = StyleSheet.create({
-  input: {
-    marginHorizontal: 4,
-    width: '70%'
-  },
-  button: {
-    marginVertical: 4,
-    marginHorizontal: 4,
-    width: '70%',
-    marginTop: '5%'
-  },
+    input: {
+        marginHorizontal: 4,
+        width: '70%'
+    },
+    button: {
+        marginVertical: 4,
+        width: '70%',
+        marginTop: '5%'
+    },
 });
 
+const logo = require("../../assets/blabla_eat.png");
 export default class SignIn extends Component {
 
   componentWillMount() {

@@ -51,7 +51,6 @@ export default class SignUp extends Component {
         this.props.navigation.navigate('Home');
       } else {
         console.log("Nobody");
-
       }
     })
   }
@@ -63,6 +62,7 @@ export default class SignUp extends Component {
   onChangeFName = (fName) => {
     this.setState({ fName });
   }
+  
   onChangeLName = (lName) => {
     this.setState({ lName });
   }

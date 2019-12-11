@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, AsyncStorage } from 'react-native';
 import { mapping } from '@eva-design/eva';
 import { light as lightTheme } from '@eva-design/eva';
 import {
@@ -21,6 +21,19 @@ export default class Home extends Component {
   state = {
     searchValue: '',
     selectedIndex: 1,
+  }
+  async componentDidMount() {
+    try {
+      const value = await AsyncStorage.getItem('User');
+      if (value !== null) {
+         res = JSON.parse(value)
+        console.log(res);
+        console.log(res.fname);
+      }
+    } catch (error) {
+      console.log(error);
+    }    
+
   }
 
   renderItem = ({ item, index }) => (

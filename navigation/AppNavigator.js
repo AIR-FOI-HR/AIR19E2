@@ -1,8 +1,6 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-
-
 import Home from '../src/home/home';
 import SignIn from '../src/login/signIn';
 import SignUp from '../src/login/signUp';
@@ -25,11 +23,11 @@ const MainNav = createStackNavigator({
 //     SignIn: {screen: SignIn},
 //     Home: {screen: Home},
 // }, {headerMode: 'none'});
-  SignIn: { screen: SignIn },
-  SignUp: { screen: SignUp },
-  Create: {screen: Create},
-  MealEvent: {screen: MealEvent},
-  ['Home']: BottomTabNavigator,
+['Home']: BottomTabNavigator,
+MealEvent: {screen: MealEvent},
+SignIn: { screen: SignIn },
+SignUp: { screen: SignUp },
+Create: {screen: Create},
 }, { headerMode: 'none' });
 
 const App = createAppContainer(MainNav);
