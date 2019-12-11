@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableHighlight } from 'react-native';
-import { Text as TextN } from 'react-native';
+import { View, StyleSheet, Text as TextN } from 'react-native';
 import "firebase/auth";
 import firebase from "firebase/app";
-import firebaseConfig from "../../firebaseConfig";
+import { firebaseConfig } from "../../firebaseConfig";
 import { FirebaseAuthProvider, IfFirebaseUnAuthed } from '@react-firebase/auth';
-import { View, StyleSheet } from 'react-native';
-import { mapping } from '@eva-design/eva';
-import { light as lightTheme } from '@eva-design/eva';
+import { mapping, light as lightTheme } from '@eva-design/eva';
 import { ApplicationProvider, Layout, Input, Icon, Text, Button } from 'react-native-ui-kitten';
 
 firebase.initializeApp(firebaseConfig);
