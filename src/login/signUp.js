@@ -66,7 +66,6 @@ export default class SignUp extends Component {
     };
 
     onSignUp = () => {
-        console.log("bonjour");
         const errors = this.validate(this.state);
         console.log(errors);
         this.setState({errors});
