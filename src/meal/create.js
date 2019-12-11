@@ -8,264 +8,272 @@ import MapView from 'react-native-maps';
 import firebase from "firebase/app";
 import 'firebase/firestore';
 
-let db = firebase.firestore();
+// let db = firebase.firestore();
 
 const mode = 'datetime';
 const mealLogo = require('../../assets/lunch-box.png');
 
 
 export default class Create extends Component {
-    state = {
-        name: "",
-        peopleMax: 0,
-        description: "",
-        priceMax: 0,
-        priceMin: 0,
-        duration: 0,
-        place: {
-            latitude: 16.338097,
-            longitude: 46.307654,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-        },
-        startAt: new Date(),
-        endAt: new Date(),
 
-        newIngredient: "",
-        ingredient: [],
+  constructor(props) {
+    super(props);
+    this.db = firebase.firestore();
+  }
 
-        region: {
-            latitude: 16.338097,
-            longitude: 46.307654,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-        },
-        visible: false,
+  state = {
+    userId: null,
+    name: "",
+    peopleMax: 0,
+    description: "",
+    priceMax: 0,
+    priceMin: 0,
+    duration: 0,
+    place: {
+      latitude: 16.338097,
+      longitude: 46.307654,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    },
+    startAt: new Date(),
+    endAt: new Date(),
+
+    newIngredient: "",
+    ingredient: [],
+
+    region: {
+      latitude: 16.338097,
+      longitude: 46.307654,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    },
+    visible: false,
+  }
+
+  componentDidMount() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      let lat = parseFloat(position.coords.latitude)
+      let long = parseFloat(position.coords.longitude)
+
+      let initialRegion = {
+        latitude: lat,
+        longitude: long,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
+
+      this.setState({ place: initialRegion })
+      this.setState({ region: initialRegion })
+    },
+      (error) => alert(JSON.stringify(error)),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
+  }
+
+  onChangeInput = (e, index) => {
+    switch (index) {
+      case "name":
+        this.setState({ name: e });
+        break;
+      case "peopleMax":
+        if (typeof e != Number)
+          e = 0;
+        this.setState({ peopleMax: parseInt(e, 10) });
+        break;
+      case "description":
+        this.setState({ description: e });
+        break;
+      case "priceMax":
+        if (typeof e != Number)
+          e = 0;
+        this.setState({ priceMax: parseInt(e, 10) });
+        break;
+      case "priceMin":
+        if (typeof e != Number)
+          e = 0;
+        this.setState({ priceMin: parseInt(e, 10) });
+        break;
+      case "duration":
+        if (typeof e != Number)
+          e = 0;
+        this.setState({ duration: parseInt(e, 10) });
+        break;
+      case "place":
+        this.setState({ place: e });
+        break;
+      case "startAt":
+        this.setState({ startAt: e });
+        break;
+      case "endAt":
+        this.setState({ startAt: e });
+        break;
+      case "newIngredient":
+        this.setState({ newIngredient: e })
+      default:
+        break;
     }
+  }
 
-    componentDidMount() {
-        navigator.geolocation.getCurrentPosition((position) => {
-            let lat = parseFloat(position.coords.latitude)
-            let long = parseFloat(position.coords.longitude)
+  addIngredient = () => {
+    let tmp = this.state.ingredient;
 
-            let initialRegion = {
-                latitude: lat,
-                longitude: long,
-                latitudeDelta:  0.0922,
-                longitudeDelta: 0.0421,
-            }
+    tmp.push(this.state.newIngredient);
+    this.setState({ ingredient: tmp });
+    this.setState({ newIngredient: '' });
+  }
 
-            this.setState({place: initialRegion})
-            this.setState({region: initialRegion})
-        },
-        (error) => alert(JSON.stringify(error)),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000});
-    }
+  removeIngredient = (e) => {
+    let tmp = this.state.ingredient;
 
-    onChangeInput = (e, index) => {
-        switch (index) {
-            case "name":
-                this.setState({name: e});
-                break;
-            case "peopleMax":
-                if (typeof e != Number)
-                    e = 0;
-                this.setState({peopleMax: parseInt(e, 10)});
-                break;
-            case "description":
-                this.setState({description: e});
-                break;
-            case "priceMax":
-                if (typeof e != Number)
-                    e = 0;
-                this.setState({priceMax: parseInt(e, 10)});
-                break;
-            case "priceMin":
-                if (typeof e != Number)
-                    e = 0;
-                this.setState({priceMin: parseInt(e, 10)});
-                break;
-            case "duration":
-                if (typeof e != Number)
-                    e = 0;
-                this.setState({duration: parseInt(e, 10)});
-                break;
-            case "place":
-                this.setState({place: e});
-                break;
-            case "startAt":
-                this.setState({startAt: e});
-                break;
-            case "endAt":
-                this.setState({startAt: e});
-                break;
-            case "newIngredient":
-                this.setState({newIngredient: e})
-            default:
-                break;
-        }
-    }
+    tmp.splice(e, 1);
+    this.setState({ ingredient: tmp });
+  }
 
-    addIngredient = () => {
-        let tmp = this.state.ingredient;
+  onCancel = () => {
+    this.props.navigation.navigate('Home');
+  };
 
-        tmp.push(this.state.newIngredient);
-        this.setState({ingredient: tmp});
-        this.setState({newIngredient: ''});
-    }
+  createMeal = () => {
+    iState = this.state;
 
-    removeIngredient = (e) => {
-        let tmp = this.state.ingredient;
+    delete iState.region;
+    delete iState.visible;
 
-        tmp.splice(e, 1);
-        this.setState({ingredient: tmp});
-    }
+    iState.userId = firebase.auth().currentUser.uid;
+    this.db.collection('meal').add(iState)
+      .then(ref => { this.props.navigation.navigate('MealEvent'); });
+  };
 
-    onCancel = () => {
-        this.props.navigation.navigate('Home');
-    };
+  showDateTimePicker = () => {
+    this.setState({ visible: true });
+  };
 
-    createMeal = () => {
-        iState = this.state;
+  hideDateTimePicker = () => {
+    this.setState({ visible: false });
+  };
 
-        delete iState.region;
-        delete iState.visible;
-
-        db.collection('meal').add(iState)
-            .then(ref => {this.props.navigation.navigate('MealEvent');});
-    };
-
-    showDateTimePicker = () => {
-        this.setState({ visible: true });
-    };
-
-    hideDateTimePicker = () => {
-        this.setState({ visible: false });
-    };
-
-    render() {
-        return (
-            <ApplicationProvider mapping={mapping} theme={lightTheme}>
-            <Layout style={styles.container}>
-                <View style={styles.view}>
-                    <View style={{alignItems: 'center'}}>
-                        <Image
-                                style={{width: 100, height: 100}}
-                                source={mealLogo}
-                        />
-                        <Text style={{marginTop: '2%'}} category='h3'> Create a meal !</Text>
-                    </View>
-                    <View style={{marginTop: '5%'}}>
-                        <ScrollView contentContainerStyle={styles.ScrollView} showsVerticalScrollIndicator={false}>
-                            <Input
-                                label='Title :'
-                                style={styles.input}
-                                value={this.state.name}
-                                onChangeText={(e) => this.onChangeInput(e, "name")}
-                                placeholder='Enter the title of the meal.'
-                            />
-                            <Input
-                                keyboardType='numeric'
-                                label='Maximum people :'
-                                style={styles.input}
-                                value={this.state.peopleMax.toString()}
-                                onChangeText={(e) => this.onChangeInput(e, "peopleMax")}
-                                placeholder='Enter the number of people that could come to the meal.'
-                            />
-                            <Input
-                                label='Description :'
-                                style={styles.input}
-                                value={this.state.description}
-                                onChangeText={(e) => this.onChangeInput(e, "description")}
-                                placeholder='Enter the description of the meal.'
-                            />
-                            <Input
-                                keyboardType='numeric'
-                                label='Maximum price :'
-                                style={styles.input}
-                                value={this.state.priceMax.toString()}
-                                onChangeText={(e) => this.onChangeInput(e, "priceMax")}
-                                placeholder='Enter the maximum amount of money you could ask for the meal.'
-                            />
-                            <Input
-                                keyboardType='numeric'
-                                label='Minimum price :'
-                                style={styles.input}
-                                value={this.state.priceMin.toString()}
-                                onChangeText={(e) => this.onChangeInput(e, "priceMin")}
-                                placeholder='Enter the minimum amount of money you could ask for the meal.'
-                            />
-                            <Input
-                                keyboardType='numeric'
-                                label='Duration :'
-                                style={styles.input}
-                                value={this.state.duration.toString()}
-                                onChangeText={(e) => this.onChangeInput(e, "duration")}
-                                placeholder='Enter the duration time of the meal.'
-                            />
-                            <Text>Ingredient :</Text>
-                            {
-                                this.state.ingredient.map((txt, index) => (
-                                    <Button
-                                        key={index}
-                                        style={styles.buttonList}
-                                        onPress={() => this.removeIngredient(index)}
-                                    >
-                                    {txt}
-                                    </Button>
-                                ))
-                            }
-                            <Input
-                                label='Ingredient :'
-                                style={styles.input}
-                                value={this.state.newIngredient}
-                                onChangeText={(e) => this.onChangeInput(e, "newIngredient")}
-                                placeholder='Enter the ingredient of the meal.'
-                            />
-                            <Button
-                                onPress={() => this.addIngredient()}
-                                style={styles.button}>
-                                    Add ingredient
+  render() {
+    return (
+      <ApplicationProvider mapping={mapping} theme={lightTheme}>
+        <Layout style={styles.container}>
+          <View style={styles.view}>
+            <View style={{ alignItems: 'center' }}>
+              <Image
+                style={{ width: 100, height: 100 }}
+                source={mealLogo}
+              />
+              <Text style={{ marginTop: '2%' }} category='h3'> Create a meal !</Text>
+            </View>
+            <View style={{ marginTop: '5%' }}>
+              <ScrollView contentContainerStyle={styles.ScrollView} showsVerticalScrollIndicator={false}>
+                <Input
+                  label='Title :'
+                  style={styles.input}
+                  value={this.state.name}
+                  onChangeText={(e) => this.onChangeInput(e, "name")}
+                  placeholder='Enter the title of the meal.'
+                />
+                <Input
+                  keyboardType='numeric'
+                  label='Maximum people :'
+                  style={styles.input}
+                  value={this.state.peopleMax.toString()}
+                  onChangeText={(e) => this.onChangeInput(e, "peopleMax")}
+                  placeholder='Enter the number of people that could come to the meal.'
+                />
+                <Input
+                  label='Description :'
+                  style={styles.input}
+                  value={this.state.description}
+                  onChangeText={(e) => this.onChangeInput(e, "description")}
+                  placeholder='Enter the description of the meal.'
+                />
+                <Input
+                  keyboardType='numeric'
+                  label='Maximum price :'
+                  style={styles.input}
+                  value={this.state.priceMax.toString()}
+                  onChangeText={(e) => this.onChangeInput(e, "priceMax")}
+                  placeholder='Enter the maximum amount of money you could ask for the meal.'
+                />
+                <Input
+                  keyboardType='numeric'
+                  label='Minimum price :'
+                  style={styles.input}
+                  value={this.state.priceMin.toString()}
+                  onChangeText={(e) => this.onChangeInput(e, "priceMin")}
+                  placeholder='Enter the minimum amount of money you could ask for the meal.'
+                />
+                <Input
+                  keyboardType='numeric'
+                  label='Duration :'
+                  style={styles.input}
+                  value={this.state.duration.toString()}
+                  onChangeText={(e) => this.onChangeInput(e, "duration")}
+                  placeholder='Enter the duration time of the meal.'
+                />
+                <Text>Ingredient :</Text>
+                {
+                  this.state.ingredient.map((txt, index) => (
+                    <Button
+                      key={index}
+                      style={styles.buttonList}
+                      onPress={() => this.removeIngredient(index)}
+                    >
+                      {txt}
+                    </Button>
+                  ))
+                }
+                <Input
+                  label='Ingredient :'
+                  style={styles.input}
+                  value={this.state.newIngredient}
+                  onChangeText={(e) => this.onChangeInput(e, "newIngredient")}
+                  placeholder='Enter the ingredient of the meal.'
+                />
+                <Button
+                  onPress={() => this.addIngredient()}
+                  style={styles.button}>
+                  Add ingredient
                             </Button>
-                            <Text
-                                style={styles.input}
-                            >
-                                {"Start at : " + this.state.startAt.getMonth() +"/"+ this.state.startAt.getDate() +"/"+ this.state.startAt.getFullYear() +" - "+ this.state.startAt.getHours() +":"+ this.state.startAt.getMinutes()}
-                            </Text>
-                            <DateTimePicker
-                                mode={mode}
-                                isVisible={this.state.visible}
-                                value={this.state.startAt}
-                                onConfirm={(e) => this.onChangeInput(e, "startAt")}
-                                onCancel={this.hideDateTimePicker}
-                            />
-                            <Button
-                                onPress={this.showDateTimePicker}
-                                style={styles.button}
-                                >
-                                Change Date
+                <Text
+                  style={styles.input}
+                >
+                  {"Start at : " + this.state.startAt.getMonth() + "/" + this.state.startAt.getDate() + "/" + this.state.startAt.getFullYear() + " - " + this.state.startAt.getHours() + ":" + this.state.startAt.getMinutes()}
+                </Text>
+                <DateTimePicker
+                  mode={mode}
+                  isVisible={this.state.visible}
+                  value={this.state.startAt}
+                  onConfirm={(e) => this.onChangeInput(e, "startAt")}
+                  onCancel={this.hideDateTimePicker}
+                />
+                <Button
+                  onPress={this.showDateTimePicker}
+                  style={styles.button}
+                >
+                  Change Date
                             </Button>
-                            <View style={{height: '25%', width: '100%'}}>
-                                <MapView
-                                    style={styles.map}
-                                    region={this.state.region}
-                                >
-                                    <MapView.Marker
-                                        draggable
-                                        coordinate= {{
-                                            latitude: this.state.place.latitude,
-                                            longitude: this.state.place.longitude,
-                                        }}
-                                        onDragEnd={(e) => this.onChangeInput(e.nativeEvent.coordinate, "place")}
-                                    />
-                                </MapView>
-                            </View>
-                            <Button style={styles.button2} status='success' onPress={() => this.createMeal()}>Submit</Button>
-                        </ScrollView>
-                    </View>
+                <View style={{ height: '25%', width: '100%' }}>
+                  <MapView
+                    style={styles.map}
+                    region={this.state.region}
+                  >
+                    <MapView.Marker
+                      draggable
+                      coordinate={{
+                        latitude: this.state.place.latitude,
+                        longitude: this.state.place.longitude,
+                      }}
+                      onDragEnd={(e) => this.onChangeInput(e.nativeEvent.coordinate, "place")}
+                    />
+                  </MapView>
                 </View>
-                {/* <View style={{position: 'absolute', flex: 1,marginTop:'100%'}}> */}
-                {/* <View style={{flex: 0.6,
+                <Button style={styles.button2} status='success' onPress={() => this.createMeal()}>Submit</Button>
+              </ScrollView>
+            </View>
+          </View>
+          {/* <View style={{position: 'absolute', flex: 1,marginTop:'100%'}}> */}
+          {/* <View style={{flex: 0.6,
   justifyContent: 'flex-end',
   marginBottom: 5}}>
                 <Layout style={{ flexDirection: 'row',
@@ -275,46 +283,46 @@ export default class Create extends Component {
 
                 </Layout>
                 </View> */}
-            </Layout>
-        </ApplicationProvider>
-        )
-    }
+        </Layout>
+      </ApplicationProvider>
+    )
+  }
 };
 
 const styles = StyleSheet.create({
-    container: {
-        marginTop: '15%',
-        height: '100%',
-        width: '100%',
-        alignItems: 'center',
-    },
-    view: {
-        flex: 2,
-        width: '80%',
-        marginTop: '5%'
-    },
-    input: {
-        marginHorizontal: 4,
-        marginTop: '5%'
-    },
-    button2: {
-        margin: 8,
-    },
-    button: {
-        marginVertical: 4,
-        marginHorizontal: 4,
-        width: '70%',
-        marginTop: '5%'
-    },
-    ScrollView: {
-        alignItems: 'center',
-        height: 1500,
-    },
-    map: {
-        width: '100%',
-        height: '100%',
-    },
-    buttonList: {
-        color: 'white',
-    }
+  container: {
+    marginTop: '15%',
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+  },
+  view: {
+    flex: 2,
+    width: '80%',
+    marginTop: '5%'
+  },
+  input: {
+    marginHorizontal: 4,
+    marginTop: '5%'
+  },
+  button2: {
+    margin: 8,
+  },
+  button: {
+    marginVertical: 4,
+    marginHorizontal: 4,
+    width: '70%',
+    marginTop: '5%'
+  },
+  ScrollView: {
+    alignItems: 'center',
+    height: 1500,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+  buttonList: {
+    color: 'white',
+  }
 });
