@@ -5,6 +5,10 @@ import { light as lightTheme } from '@eva-design/eva';
 import { ApplicationProvider, Layout, Button, Input, Text } from 'react-native-ui-kitten';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import MapView from 'react-native-maps';
+import firebase from "firebase/app";
+import 'firebase/firestore';
+
+let db = firebase.firestore();
 
 const mode = 'datetime';
 
@@ -62,18 +66,26 @@ export default class Create extends Component {
                 this.setState({name: e});
                 break;
             case "peopleMax":
+                if (typeof e != Number)
+                    e = 0;
                 this.setState({peopleMax: parseInt(e, 10)});
                 break;
             case "description":
                 this.setState({description: e});
                 break;
             case "priceMax":
+                if (typeof e != Number)
+                    e = 0;
                 this.setState({priceMax: parseInt(e, 10)});
                 break;
             case "priceMin":
+                if (typeof e != Number)
+                    e = 0;
                 this.setState({priceMin: parseInt(e, 10)});
                 break;
             case "duration":
+                if (typeof e != Number)
+                    e = 0;
                 this.setState({duration: parseInt(e, 10)});
                 break;
             case "place":
@@ -109,7 +121,12 @@ export default class Create extends Component {
 
     createMeal = () => {
         iState = this.state;
-        Alert.alert(iState.name, "Description " + iState.description + ", for " + iState.peopleMax + " people.")
+
+        delete iState.region;
+        delete iState.visible;
+
+        db.collection('meal').add(iState)
+            .then(ref => {this.props.navigation.navigate('MealEvent');});
     };
 
     showDateTimePicker = () => {
