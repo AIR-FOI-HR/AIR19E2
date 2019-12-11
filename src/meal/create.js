@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     },
     button2: {
         margin: 8,
-      },
+    },
     button: {
         marginVertical: 4,
         marginHorizontal: 4,

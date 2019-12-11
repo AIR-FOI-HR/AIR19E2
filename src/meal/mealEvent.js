@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { View, ScrollView, StyleSheet, Alert, Image } from 'react-native';
 import { mapping } from '@eva-design/eva';
 import { light as lightTheme } from '@eva-design/eva';
-import { ApplicationProvider, Layout, Button, Input, Text, Icon, Card } from 'react-native-ui-kitten';
+import { ApplicationProvider, Layout, Button, Input, Text, Icon } from 'react-native-ui-kitten';
 
 import MapView from 'react-native-maps';
 
 const mealImg = require('../../assets/mealEx.jpg');
 
-export default class Create extends Component {
+export default class MealEvent extends Component {
     state = {
         name: "Carbonara",
         peopleMax: 10,
@@ -55,10 +55,15 @@ export default class Create extends Component {
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000});
     }
 
+    joinMeal() {
+        alert("You join this meal !!");
+    }
+
     render() {
         return (
             <ApplicationProvider mapping={mapping} theme={lightTheme}>
                 <Layout style={styles.container}>
+                    <View style={styles.view}>
                     <View style={{marginTop: '10%', height: "40%"}}>
                         <Image
                             style={{width: "100%", height: "100%"}}
@@ -66,7 +71,6 @@ export default class Create extends Component {
                         />
 
                     </View>
-                    <View style={styles.view}>
                         <ScrollView contentContainerStyle={styles.ScrollView} showsVerticalScrollIndicator={false}>
                             <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
                                 <Text category="h4">{this.state.name}</Text>
@@ -89,15 +93,15 @@ export default class Create extends Component {
                             </View>
                             <Text>Ingredient :</Text>
                             <View style={{marginTop: '2%', flexDirection: 'row',flexWrap: 'wrap'}}>
-                            <Layout style={styles.container2}>
+                                <Layout style={styles.container2}>
                                 {
                                     this.state.ingredient.map((txt, index) => (
                                         <Layout level='1' style={styles.layout}>
-                                            <Card>
+                                            {/* /<Card> */}
                                                 <Text key={index}>
                                                     {txt}
                                                 </Text>
-                                            </Card>
+                                            {/* </Card> */}
                                         </Layout>
                                     ))
                                 }
@@ -121,6 +125,12 @@ export default class Create extends Component {
                                     />
                                 </MapView>
                             </View>
+                            <Button
+                                onPress={() => this.joinMeal()}
+                                style={styles.button}
+                                status='info'>
+                                Join meal !
+                            </Button>
                         </ScrollView>
                     </View>
                 </Layout>
@@ -134,12 +144,12 @@ const styles = StyleSheet.create({
     container2: {
         flex: 1,
         flexDirection: 'row',
-      },
-      layout: {
+    },
+    layout: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-      },
+    },
     container: {
         height: '100%',
         width: '100%',

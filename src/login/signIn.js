@@ -1,4 +1,12 @@
 import React, { Component } from 'react';
+import { View, StyleSheet, Text as TextN } from 'react-native';
+import "firebase/auth";
+import firebase from "firebase/app";
+import { firebaseConfig } from "../../firebaseConfig";
+import { FirebaseAuthProvider, IfFirebaseUnAuthed } from '@react-firebase/auth';
+import { mapping, light as lightTheme } from '@eva-design/eva';
+import { ApplicationProvider, Layout, Input, Icon, Text, Button } from 'react-native-ui-kitten';
+
 firebase.initializeApp(firebaseConfig);
 
 const styles = StyleSheet.create({
