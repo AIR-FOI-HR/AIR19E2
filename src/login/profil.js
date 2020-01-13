@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import { Layout, Button, Icon, Text } from 'react-native-ui-kitten';
+import { Layout, Button, Icon, Text, ApplicationProvider, Input } from 'react-native-ui-kitten';
 import { View, StyleSheet } from 'react-native';
-import { Input } from 'react-native-ui-kitten';
-
-const user = {
-  email: "test@test.test",
-  fName: "Antoine",
-  lName: "Briaux",
-  phone: "+331097829"
-}
+import { mapping, light as lightTheme } from '@eva-design/eva';
+import "firebase/auth";
+import firebase from "firebase/app";
 
 const editIcon = (style) => (
   <Icon name="edit-outline" width={32} height={32}></Icon>
+)
+
+const signOutIcon = (style) => (
+  <Icon name="log-out-outline" width={32} height={32}></Icon>
 )
 
 export default class Profil extends Component {
@@ -20,35 +19,55 @@ export default class Profil extends Component {
     editing: false,
   }
 
+  signOut = () => {
+    firebase.auth().signOut()
+    .then(function() {
+      console.log("signout");
+      this.props.navigation.navigate('Auth');
+    }.bind(this)).catch(function(error) {
+      console.log("No signout : " + error);
+    });
+  }
+
+  changeEditing = () => {
+    this.setState({editing: !this.state.editing});
+  }
+
   render() {
     return (
-      <Layout>
-        <View style={styles.view}>
-          <Button style={styles.editButton} appearance="ghost" icon={editIcon}
-            onPress={() => console.log(this.state.editing)}> </Button>
-          <Text>Email:</Text>
-          <Input value={user.email} disabled={!this.state.editing} />
-          <Text>First name:</Text>
-          <Input value={user.fName} disabled={!this.state.editing} />
-          <Text>Last Name:</Text>
-          <Input value={user.lName} disabled={!this.state.editing} />
-          <Text>Phone number:</Text>
-          <Input value={user.phone} disabled={!this.state.editing} />
-        </View>
-      </Layout>
+      <ApplicationProvider mapping={mapping} theme={lightTheme}>
+        <Layout style={styles.container}>
+          <View style={styles.view}>
+            <View  style={styles.Buttons}>
+              <Button appearance="ghost" icon={editIcon}
+                onPress={this.changeEditing}></Button>
+              <Button appearance="ghost" icon={signOutIcon} onPress={this.signOut}></Button>
+            </View>
+            <Text>Email:</Text>
+            <Input disabled={!this.state.editing}/>
+            <Text>First name:</Text>
+            <Input disabled={!this.state.editing}/>
+            <Text>Last Name:</Text>
+            <Input disabled={!this.state.editing}/>
+            <Text>Phone number:</Text>
+            <Input disabled={!this.state.editing}/>
+          </View>
+        </Layout>
+      </ApplicationProvider>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  view: {
-    height: "100%",
-    width: "100%",
-    flex: 2,
-    // alignItems: 'center',
-    marginTop: '5%',
+  container: {
+    height: '100%',
+    width: '100%'
   },
-  editButton: {
+  view: {
+    flex: 2,
+    marginTop: '15%',
+  },
+  Buttons: {
     alignSelf: "flex-end"
   }
 })

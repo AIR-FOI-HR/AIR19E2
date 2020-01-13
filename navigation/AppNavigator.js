@@ -1,9 +1,6 @@
-import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Home from '../src/home/home';
-import SignIn from '../src/login/signIn';
-import SignUp from '../src/login/signUp';
 import Create from '../src/meal/create';
 import MealEvent from '../src/meal/mealEvent';
 import { BottomNavigator } from './BottomNavigator';
@@ -18,18 +15,16 @@ export const BottomTabNavigator = createBottomTabNavigator({
   tabBarComponent: BottomNavigator,
 })
 
-const MainNav = createStackNavigator({
-//     SignUp: {screen: SignUp},
-//     SignIn: {screen: SignIn},
-//     Home: {screen: Home},
-// }, {headerMode: 'none'});
-['Home']: BottomTabNavigator,
-MealEvent: {screen: MealEvent},
-SignIn: { screen: SignIn },
-SignUp: { screen: SignUp },
-Create: {screen: Create},
-}, { headerMode: 'none' });
+const AppNavigator = createStackNavigator(
+  {
+    ['Home']: BottomTabNavigator,
+    MealEvent: {screen: MealEvent},
+    Create: {screen: Create},
+  },
+  {
+    initialRouteName: 'Home',
+    headerMode: 'none'
+  }
+);
 
-const App = createAppContainer(MainNav);
-
-export default App;
+export default AppNavigator;
