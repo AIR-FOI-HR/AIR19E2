@@ -25,7 +25,7 @@ export default class SignIn extends Component {
   componentWillMount() {
     this.unsuscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log("Hello", firebase.auth().currentUser);
+        // console.log("Hello", firebase.auth().currentUser);
         this.props.navigation.navigate('App');
       } else {
         console.log("Nobody");
