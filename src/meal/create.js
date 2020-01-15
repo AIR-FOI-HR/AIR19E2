@@ -7,6 +7,8 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import MapView from 'react-native-maps';
 import firebase from "firebase/app";
 import 'firebase/firestore';
+import {KeyboardAvoidingView} from 'react-native';
+
 
 // let db = firebase.firestore();
 
@@ -153,9 +155,9 @@ export default class Create extends Component {
 
   render() {
     return (
-      <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <Layout style={styles.container}>
           <View style={styles.view}>
+          <KeyboardAvoidingView behavior="position" enabled>
             <View style={{ alignItems: 'center' }}>
               <Image
                 style={{ width: 100, height: 100 }}
@@ -163,7 +165,7 @@ export default class Create extends Component {
               />
               <Text style={{ marginTop: '2%' }} category='h3'> Create a meal !</Text>
             </View>
-            <View style={{ marginTop: '5%' }}>
+            <View style={{ marginTop: '3%' }}>
               <ScrollView contentContainerStyle={styles.ScrollView} showsVerticalScrollIndicator={false}>
                 <Input
                   label='Title :'
@@ -211,18 +213,20 @@ export default class Create extends Component {
                   onChangeText={(e) => this.onChangeInput(e, "duration")}
                   placeholder='Enter the duration time of the meal.'
                 />
-                <Text>Ingredient :</Text>
-                {
-                  this.state.ingredient.map((txt, index) => (
-                    <Button
-                      key={index}
-                      style={styles.buttonList}
-                      onPress={() => this.removeIngredient(index)}
-                    >
-                      {txt}
-                    </Button>
-                  ))
-                }
+                <View style={{}}>
+                    {
+                      this.state.ingredient.map((txt, index) => (
+                        <Button
+                          key={index}
+                          style={{maxWidth: '40%'}}
+                          onPress={() => this.removeIngredient(index)}
+                        >
+                          {txt}
+                        </Button>
+                      ))
+                    }
+                </View>
+                {this.state.ingredient.length > 0 ? <Text>Ingredient :</Text> : null }
                 <Input
                   label='Ingredient :'
                   style={styles.input}
@@ -230,14 +234,16 @@ export default class Create extends Component {
                   onChangeText={(e) => this.onChangeInput(e, "newIngredient")}
                   placeholder='Enter the ingredient of the meal.'
                 />
-                <Button
-                  onPress={() => this.addIngredient()}
-                  style={styles.button}>
-                  Add ingredient
-                            </Button>
-                <Text
-                  style={styles.input}
-                >
+                <View style={{alignItems: 'center', marginTop: '2%'}}>
+                  <Button
+                    onPress={() => this.addIngredient()}
+                    //style={styles.button}
+                    style={{width: '70%'}}
+                    >
+                      Add ingredient
+                    </Button>
+                </View>
+                <Text style={styles.input}>
                   {"Start at : " + this.state.startAt.getMonth() + "/" + this.state.startAt.getDate() + "/" + this.state.startAt.getFullYear() + " - " + this.state.startAt.getHours() + ":" + this.state.startAt.getMinutes()}
                 </Text>
                 <DateTimePicker
@@ -253,7 +259,7 @@ export default class Create extends Component {
                 >
                   Change Date
                             </Button>
-                <View style={{ height: '25%', width: '100%' }}>
+                {/* <View style={{ height: '25%', width: '100%' }}>
                   <MapView
                     style={styles.map}
                     region={this.state.region}
@@ -267,10 +273,11 @@ export default class Create extends Component {
                       onDragEnd={(e) => this.onChangeInput(e.nativeEvent.coordinate, "place")}
                     />
                   </MapView>
-                </View>
+                </View> */}
                 <Button style={styles.button2} status='success' onPress={() => this.createMeal()}>Submit</Button>
               </ScrollView>
             </View>
+          </KeyboardAvoidingView>
           </View>
           {/* <View style={{position: 'absolute', flex: 1,marginTop:'100%'}}> */}
           {/* <View style={{flex: 0.6,
@@ -284,7 +291,6 @@ export default class Create extends Component {
                 </Layout>
                 </View> */}
         </Layout>
-      </ApplicationProvider>
     )
   }
 };
@@ -297,7 +303,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   view: {
-    flex: 2,
+    flex: 2, 
     width: '80%',
     marginTop: '5%'
   },
@@ -315,7 +321,7 @@ const styles = StyleSheet.create({
     marginTop: '5%'
   },
   ScrollView: {
-    alignItems: 'center',
+    //alignItems: 'center',
     height: 1500,
   },
   map: {

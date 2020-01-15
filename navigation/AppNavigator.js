@@ -23,11 +23,11 @@ const MainNav = createStackNavigator({
 //     SignIn: {screen: SignIn},
 //     Home: {screen: Home},
 // }, {headerMode: 'none'});
+Create: {screen: Create},
+SignIn: { screen: SignIn },
 ['Home']: BottomTabNavigator,
 MealEvent: {screen: MealEvent},
-SignIn: { screen: SignIn },
 SignUp: { screen: SignUp },
-Create: {screen: Create},
 }, { headerMode: 'none' });
 
 const App = createAppContainer(MainNav);
