@@ -75,7 +75,7 @@ export default class Create extends Component {
         this.setState({ name: e });
         break;
       case "peopleMax":
-        if (typeof e != Number)
+        if (e.length === 0)
           e = 0;
         this.setState({ peopleMax: parseInt(e, 10) });
         break;
@@ -83,17 +83,17 @@ export default class Create extends Component {
         this.setState({ description: e });
         break;
       case "priceMax":
-        if (typeof e != Number)
+        if (e.length === 0)
           e = 0;
         this.setState({ priceMax: parseInt(e, 10) });
         break;
       case "priceMin":
-        if (typeof e != Number)
+        if (e.length === 0)
           e = 0;
         this.setState({ priceMin: parseInt(e, 10) });
         break;
       case "duration":
-        if (typeof e != Number)
+        if (e.length === 0)
           e = 0;
         this.setState({ duration: parseInt(e, 10) });
         break;
@@ -278,8 +278,8 @@ export default class Create extends Component {
   marginBottom: 5}}>
                 <Layout style={{ flexDirection: 'row',
     flexWrap: 'wrap',}}>
-                     <Button style={styles.button2} status='danger' onPress={() => this.onCancel()}>Cancel</Button>
-                     <Button style={styles.button2} status='success' onPress={() => this.createMeal()}>Submit</Button>
+                    <Button style={styles.button2} status='danger' onPress={() => this.onCancel()}>Cancel</Button>
+                    <Button style={styles.button2} status='success' onPress={() => this.createMeal()}>Submit</Button>
 
                 </Layout>
                 </View> */}
