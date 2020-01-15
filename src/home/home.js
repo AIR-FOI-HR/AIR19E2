@@ -26,13 +26,13 @@ export default class Home extends Component {
     try {
       const value = await AsyncStorage.getItem('User');
       if (value !== null) {
-         res = JSON.parse(value)
+          res = JSON.parse(value)
         console.log(res);
         console.log(res.fname);
       }
     } catch (error) {
       console.log(error);
-    }    
+    }
 
   }
 

@@ -7,7 +7,7 @@ import { firebaseConfig } from "./firebaseConfig";
 import firebase from "firebase/app";
 firebase.initializeApp(firebaseConfig);
 
-import AppNavigator from './navigation/AppNavigator';
+import AppContainer from './navigation/Index';
 
 export default function App() {
 
@@ -15,7 +15,7 @@ export default function App() {
     <React.Fragment>
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <IconRegistry icons={EvaIconsPack} />
-        <AppNavigator />
+        <AppContainer />
       </ApplicationProvider>
     </React.Fragment>
   );
