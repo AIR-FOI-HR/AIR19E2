@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, ScrollView, StyleSheet, Alert, Image } from 'react-native';
+import { View, ScrollView, StyleSheet, Image } from 'react-native';
 import { mapping } from '@eva-design/eva';
 import { light as lightTheme } from '@eva-design/eva';
-import { ApplicationProvider, Layout, Button, Input, Text, Icon } from 'react-native-ui-kitten';
+import { ApplicationProvider, Layout, Button, Text, Icon } from 'react-native-ui-kitten';
 
 import MapView from 'react-native-maps';
 
@@ -69,7 +69,6 @@ export default class MealEvent extends Component {
                             style={{width: "100%", height: "100%"}}
                             source={mealImg}
                         />
-
                     </View>
                         <ScrollView contentContainerStyle={styles.ScrollView} showsVerticalScrollIndicator={false}>
                             <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
@@ -96,9 +95,9 @@ export default class MealEvent extends Component {
                                 <Layout style={styles.container2}>
                                 {
                                     this.state.ingredient.map((txt, index) => (
-                                        <Layout level='1' style={styles.layout}>
+                                        <Layout key={index} level='1' style={styles.layout}>
                                             {/* /<Card> */}
-                                                <Text key={index}>
+                                                <Text>
                                                     {txt}
                                                 </Text>
                                             {/* </Card> */}

@@ -1,48 +1,49 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, AsyncStorage } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { mapping } from '@eva-design/eva';
 import { light as lightTheme } from '@eva-design/eva';
 import {
-  ApplicationProvider, Layout, ListItem, List, BottomNavigation,
-  BottomNavigationTab,
+  ApplicationProvider, Layout, Text, Icon
 } from 'react-native-ui-kitten';
 import { Input } from 'react-native-elements';
+import firebase from "firebase/app";
 
-
-const data = new Array(8).fill({
-  title: 'Title',
-  description: 'Description'
-});
-
-
+const mealImg = require('../../assets/mealEx.jpg');
 
 export default class Home extends Component {
 
+  constructor(props) {
+    super(props);
+    this.db = firebase.firestore();
+  }
+
   state = {
+    meals: [],
     searchValue: '',
     selectedIndex: 1,
   }
-  async componentDidMount() {
-    try {
-      const value = await AsyncStorage.getItem('User');
-      if (value !== null) {
-          res = JSON.parse(value)
-        console.log(res);
-        console.log(res.fname);
+
+  componentDidMount = () => {
+    let allMeals = this.db.collection('meal');
+
+    console.ignoredYellowBox = ['Setting a timer'];
+    allMeals.where('userId', '==', firebase.auth().currentUser.uid).get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        console.log('No matching documents.');
+        return;
       }
-    } catch (error) {
-      console.log(error);
-    }
-
+      let meals = [];
+      snapshot.forEach(doc => {
+        // console.log(doc.id, '=>', doc.data());
+        meals.push({data: doc.data(), id: doc.id});
+      });
+      this.setState({meals: meals});
+    })
+    .catch(err => {
+      console.log('Error getting documents', err);
+    });
   }
-
-  renderItem = ({ item, index }) => (
-    <ListItem
-      title={item.title ? `${item.title}` : `Item ${index}`}
-      description={item.description ? `${item.description}` : `This is item ${index}`}
-      onPress={() => this.props.navigation.navigate('MealEvent')}
-    ></ListItem>
-  )
 
   onTabSelect = (selectedIndex) => {
     this.setState({ selectedIndex });
@@ -64,14 +65,37 @@ export default class Home extends Component {
               onChangeText={this.onSearchChange}
             >
             </Input>
-            <List
-              style={styles.list}
-              contentContainerStyle={styles.contentContainer}
-              data={data}
-              renderItem={this.renderItem}
-              >
-            </List>
-          </View>
+            {/* <View style={{marginTop: 2}}> */}
+              {this.state.meals.length ?
+                this.state.meals.map((data) => (
+                  <TouchableOpacity style={{width: "100%"}} key={data.id} onPress={() => this.props.navigation.navigate('MealEvent')}>
+                    <View style={{borderBottomColor: "Black", borderBottomWidth: 1}}>
+                      <View style={{borderBottomColor: "Black", borderBottomWidth: 0.5}}>
+                        <View style={{height: "50%"}}>
+                          <Image
+                            style={{height: "100%"}}
+                            source={ data.data.mealImg ? data.data.mealImg : mealImg }
+                            />
+                        </View>
+                        <View style={{flexDirection: "row", flexWrap: 'wrap'}}>
+                          <Text category="h4">{data.data.name}</Text>
+                          <View style={{flex: 1, flexDirection: 'row-reverse'}}>
+                            <Text>{data.data.peopleMax}</Text>
+                            <Icon name='person' width={25} height={25} fill='gray' />
+                          </View>
+                        </View>
+                      </View>
+                      <Text>{data.data.description}</Text>
+                    </View>
+                  </TouchableOpacity>
+              )) : <View
+                      key="0"
+                      onPress={() => this.props.navigation.navigate('createMeal')}
+                    ><Text>No meals registered yet ! Create one !</Text>
+                    </View>
+              }
+            </View>
+          {/* </View>  */}
         </Layout>
       </ApplicationProvider>
     )
@@ -91,11 +115,5 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginHorizontal: 4,
-  },
-  list: {
-    width: '100%'
-  },
-  contentContainer: {
-    paddingHorizontal: 8
   }
 })
