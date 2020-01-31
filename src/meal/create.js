@@ -1,20 +1,30 @@
 import React, { Component } from 'react';
 import { View, ScrollView, StyleSheet, Alert, Image } from 'react-native';
-import { mapping } from '@eva-design/eva';
-import { light as lightTheme } from '@eva-design/eva';
-import { ApplicationProvider, Layout, Button, Input, Text, Icon } from 'react-native-ui-kitten';
+import { Layout, Button, Input, Text } from 'react-native-ui-kitten';
 import DateTimePicker from "react-native-modal-datetime-picker";
-import MapView from 'react-native-maps';
 import firebase from "firebase/app";
 import 'firebase/firestore';
 import {KeyboardAvoidingView} from 'react-native';
 
-
-// let db = firebase.firestore();
-
 const mode = 'datetime';
 const mealLogo = require('../../assets/lunch-box.png');
 
+const init =  { userId: null,
+  name: "",
+  peopleMax: 0,
+  description: "",
+  priceMax: 0,
+  priceMin: 0,
+  duration: 0,
+  address: "",
+  startAt: new Date(),
+  endAt: new Date(),
+
+  newIngredient: "",
+  ingredient: [],
+
+  visible: false,
+}
 
 export default class Create extends Component {
 
@@ -23,53 +33,7 @@ export default class Create extends Component {
     this.db = firebase.firestore();
   }
 
-  state = {
-    userId: null,
-    name: "",
-    peopleMax: 0,
-    description: "",
-    priceMax: 0,
-    priceMin: 0,
-    duration: 0,
-    place: {
-      latitude: 16.338097,
-      longitude: 46.307654,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    },
-    startAt: new Date(),
-    endAt: new Date(),
-
-    newIngredient: "",
-    ingredient: [],
-
-    region: {
-      latitude: 16.338097,
-      longitude: 46.307654,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    },
-    visible: false,
-  }
-
-  componentDidMount() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      let lat = parseFloat(position.coords.latitude)
-      let long = parseFloat(position.coords.longitude)
-
-      let initialRegion = {
-        latitude: lat,
-        longitude: long,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }
-
-      this.setState({ place: initialRegion })
-      this.setState({ region: initialRegion })
-    },
-      (error) => alert(JSON.stringify(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
-  }
+  state = init;
 
   onChangeInput = (e, index) => {
     switch (index) {
@@ -99,8 +63,8 @@ export default class Create extends Component {
           e = 0;
         this.setState({ duration: parseInt(e, 10) });
         break;
-      case "place":
-        this.setState({ place: e });
+      case "address":
+        this.setState({ address: e });
         break;
       case "startAt":
         this.setState({ startAt: e });
@@ -261,21 +225,13 @@ export default class Create extends Component {
                     Change Date
                   </Button>
                 </View>
-                {/* <View style={{ height: '25%', width: '100%' }}>
-                  <MapView
-                    style={styles.map}
-                    region={this.state.region}
-                  >
-                    <MapView.Marker
-                      draggable
-                      coordinate={{
-                        latitude: this.state.place.latitude,
-                        longitude: this.state.place.longitude,
-                      }}
-                      onDragEnd={(e) => this.onChangeInput(e.nativeEvent.coordinate, "place")}
-                    />
-                  </MapView>
-                </View> */}
+                <Input
+                  label='Address :'
+                  style={styles.input}
+                  value={this.state.address}
+                  onChangeText={(e) => this.onChangeInput(e, "address")}
+                  placeholder='Enter the address where the meal will takes place.'
+                />
                 <Button style={{marginTop: "5%"}} status='success' onPress={() => this.createMeal()}>Submit</Button>
               </ScrollView>
             </View>
@@ -305,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   view: {
-    flex: 2, 
+    flex: 2,
     width: '80%',
     marginTop: '5%'
   },
