@@ -203,7 +203,7 @@ export default class Create extends Component {
                   style={styles.input}
                   value={this.state.priceMin.toString()}
                   onChangeText={(e) => this.onChangeInput(e, "priceMin")}
-                  placeholder='Enter the minimum amount of money you could ask for the meal.'
+                  placeholder='Enter the minimum amount of money you could ask for the meal.' 
                 />
                 <Input
                   keyboardType='numeric'
@@ -213,20 +213,20 @@ export default class Create extends Component {
                   onChangeText={(e) => this.onChangeInput(e, "duration")}
                   placeholder='Enter the duration time of the meal.'
                 />
-                <View style={{}}>
+                {this.state.ingredient.length > 0 ? <Text>Ingredient :</Text> : null }
+                <View style={{ flexDirection: "row", alignSelf: "baseline", width: 90 }}>
                     {
                       this.state.ingredient.map((txt, index) => (
                         <Button
                           key={index}
-                          style={{maxWidth: '40%'}}
+                          style={{ marginLeft: '2%' }}
                           onPress={() => this.removeIngredient(index)}
                         >
                           {txt}
                         </Button>
                       ))
                     }
-                </View>
-                {this.state.ingredient.length > 0 ? <Text>Ingredient :</Text> : null }
+                </View> 
                 <Input
                   label='Ingredient :'
                   style={styles.input}
@@ -253,12 +253,14 @@ export default class Create extends Component {
                   onConfirm={(e) => this.onChangeInput(e, "startAt")}
                   onCancel={this.hideDateTimePicker}
                 />
-                <Button
-                  onPress={this.showDateTimePicker}
-                  style={styles.button}
-                >
-                  Change Date
-                            </Button>
+                <View style={{alignItems: 'center', marginTop: '2%'}}>
+                  <Button
+                    onPress={this.showDateTimePicker}
+                    //style={styles.button}
+                  >
+                    Change Date
+                  </Button>
+                </View>
                 {/* <View style={{ height: '25%', width: '100%' }}>
                   <MapView
                     style={styles.map}
@@ -274,7 +276,7 @@ export default class Create extends Component {
                     />
                   </MapView>
                 </View> */}
-                <Button style={styles.button2} status='success' onPress={() => this.createMeal()}>Submit</Button>
+                <Button style={{marginTop: "5%"}} status='success' onPress={() => this.createMeal()}>Submit</Button>
               </ScrollView>
             </View>
           </KeyboardAvoidingView>
