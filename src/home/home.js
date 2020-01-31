@@ -26,7 +26,6 @@ export default class Home extends Component {
   componentDidMount = () => {
     let allMeals = this.db.collection('meal');
 
-    console.ignoredYellowBox = ['Setting a timer'];
     allMeals.where('userId', '==', firebase.auth().currentUser.uid).get()
     .then(snapshot => {
       if (snapshot.empty) {
@@ -68,7 +67,7 @@ export default class Home extends Component {
             {/* <View style={{marginTop: 2}}> */}
               {this.state.meals.length ?
                 this.state.meals.map((data) => (
-                  <TouchableOpacity style={{width: "100%"}} key={data.id} onPress={() => this.props.navigation.navigate('MealEvent')}>
+                  <TouchableOpacity style={{width: "100%"}} key={data.id} onPress={() => this.props.navigation.navigate('MealEvent', {id: data.id})}>
                     <View style={{borderBottomColor: "Black", borderBottomWidth: 1}}>
                       <View style={{borderBottomColor: "Black", borderBottomWidth: 0.5}}>
                         <View style={{height: "50%"}}>
