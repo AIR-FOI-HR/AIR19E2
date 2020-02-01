@@ -24,9 +24,13 @@ export default class Home extends Component {
   }
 
   componentDidMount = () => {
+    this.getMeals();
+  }
+
+  getMeals = () => {
     let allMeals = this.db.collection('meal');
 
-    allMeals.where('userId', '==', firebase.auth().currentUser.uid).get()
+    allMeals.where('startAt', '>', new Date()).get()
     .then(snapshot => {
       if (snapshot.empty) {
         console.log('No matching documents.');
@@ -78,7 +82,7 @@ export default class Home extends Component {
                         <View style={{flexDirection: "row", flexWrap: 'wrap'}}>
                           <Text category="h4">{data.data.name}</Text>
                           <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                            <Text>{data.data.people}/{data.data.peopleMax}</Text>
+                            <Text>{data.data.peopleNbr}/{data.data.peopleMax}</Text>
                             <Icon name='person' width={25} height={25} fill='gray' />
                           </View>
                         </View>
@@ -86,7 +90,7 @@ export default class Home extends Component {
                       <Text>{data.data.description}</Text>
                     </View>
                   </TouchableOpacity>
-              )) : <View
+                )) : <View
                       key="0"
                       onPress={() => this.props.navigation.navigate('createMeal')}
                     ><Text>No meals registered yet ! Create one !</Text>
