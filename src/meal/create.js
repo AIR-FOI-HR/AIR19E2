@@ -17,8 +17,9 @@ const init =  { userId: null,
   priceMin: 0,
   duration: 0,
   address: "",
+  peopleNbr: 1,
   startAt: new Date(),
-  endAt: new Date(),
+  peoples: [],
 
   newIngredient: "",
   ingredient: [],
@@ -69,9 +70,6 @@ export default class Create extends Component {
       case "startAt":
         this.setState({ startAt: e });
         break;
-      case "endAt":
-        this.setState({ startAt: e });
-        break;
       case "newIngredient":
         this.setState({ newIngredient: e })
       default:
@@ -99,14 +97,23 @@ export default class Create extends Component {
   };
 
   createMeal = () => {
-    iState = this.state;
+    let uid = firebase.auth().currentUser.uid;
+    let iState = this.state;
 
-    delete iState.region;
+    console.log("Test")
+    console.log(iState)
     delete iState.visible;
+    delete iState.newIngredient;
+    console.log("Test")
+    iState.peoples.push(uid)
+    console.log("Test")
 
-    iState.userId = firebase.auth().currentUser.uid;
+    console.log(iState)
+    iState.userId = uid;
+
+    console.log("Test")
     this.db.collection('meal').add(iState)
-      .then(ref => { this.props.navigation.navigate('MealEvent'); });
+      .then(ref => { this.props.navigation.navigate('MealEvent', {id: ref.id});});
   };
 
   showDateTimePicker = () => {
@@ -167,7 +174,7 @@ export default class Create extends Component {
                   style={styles.input}
                   value={this.state.priceMin.toString()}
                   onChangeText={(e) => this.onChangeInput(e, "priceMin")}
-                  placeholder='Enter the minimum amount of money you could ask for the meal.' 
+                  placeholder='Enter the minimum amount of money you could ask for the meal.'
                 />
                 <Input
                   keyboardType='numeric'
@@ -190,7 +197,7 @@ export default class Create extends Component {
                         </Button>
                       ))
                     }
-                </View> 
+                </View>
                 <Input
                   label='Ingredient :'
                   style={styles.input}

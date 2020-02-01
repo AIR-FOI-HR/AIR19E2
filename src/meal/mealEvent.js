@@ -19,6 +19,7 @@ export default class MealEvent extends Component {
         meal: {
             name: "",
             peopleMax: 0,
+            peopleNbr: 0,
             description: "",
             priceMax: 0,
             priceMin: 0,
@@ -26,9 +27,13 @@ export default class MealEvent extends Component {
             address: "",
             startAt: new Date(),
             endAt: new Date(),
+            peoples: [],
 
             ingredient: [],
+
         },
+        present: false,
+        maxPeople: false,
         visible: false
     }
 
@@ -39,7 +44,12 @@ export default class MealEvent extends Component {
                 let meal = doc.data();
 
                 meal.startAt = meal.startAt.toDate();
+                meal.id = doc.id;
                 this.setState({meal: meal});
+                if (this.state.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1)
+                    this.setState({present: true});
+                else if ( this.state.meal.peopleNbr === this.state.meal.peopleMax)
+                    this.setState({maxPeople: true});
             } else {
                 console.log("No such document!");
             }
@@ -49,7 +59,29 @@ export default class MealEvent extends Component {
     }
 
     joinMeal() {
-        alert("You join this meal !!");
+        meal = this.state.meal;
+
+        meal.peopleNbr += 1;
+        meal.peoples.push(firebase.auth().currentUser.uid);
+
+        this.setState({present: true});
+
+        console.log(meal);
+
+        this.db.collection("meal").doc(meal.id).update(meal);
+    }
+
+    quitMeal() {
+        meal = this.state.meal;
+
+        meal.peopleNbr -= 1;
+        meal.peoples.splice(meal.peoples.indexOf(firebase.auth().currentUser.uid), 1);
+
+        this.setState({present: false});
+
+        console.log(meal);
+
+        this.db.collection("meal").doc(meal.id).update(meal);
     }
 
     render() {
@@ -67,7 +99,7 @@ export default class MealEvent extends Component {
                             <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
                                 <Text category="h4">{this.state.meal.name}</Text>
                                 <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                                    <Text category="s1">{this.state.meal.peopleMax.toString()}</Text>
+                                    <Text category="s1">{this.state.meal.peopleNbr}/{this.state.meal.peopleMax}</Text>
                                     <Icon name='person' width={25} height={25} fill='gray' />
                                 </View>
                             </View>
@@ -82,6 +114,10 @@ export default class MealEvent extends Component {
                             <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
                                 <Text category="s1" appearance='hint'>Duration : </Text>
                                 <Text>{this.state.meal.duration.toString() + 'min'}</Text>
+                            </View>
+                            <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
+                                <Text category="s1" appearance='hint'>Address : </Text>
+                                <Text>{this.state.meal.address}</Text>
                             </View>
                             <Text>Ingredient :</Text>
                             <View style={{marginTop: '2%', flexDirection: 'row',flexWrap: 'wrap'}}>
@@ -104,12 +140,23 @@ export default class MealEvent extends Component {
                             >
                                 {"Start at : " + (this.state.meal.startAt.getMonth() + 1) + "/" + this.state.meal.startAt.getDate() +"/"+ this.state.meal.startAt.getFullYear() +" - "+ this.state.meal.startAt.getHours() +":"+ this.state.meal.startAt.getMinutes()}
                             </Text>
-                            <Button
-                                onPress={() => this.joinMeal()}
-                                style={styles.button}
-                                status='info'>
-                                Join meal !
-                            </Button>
+                            {
+                                this.state.present ?
+                                    <Button
+                                        onPress={() => this.quitMeal()}
+                                        style={styles.button}
+                                        status='danger'>
+                                        Quit Meal !
+                                    </Button>
+                                :
+                                    <Button
+                                        disabled={this.state.maxPeople}
+                                        onPress={() => this.joinMeal()}
+                                        style={styles.button}
+                                        status='info'>
+                                        Join meal !
+                                    </Button>
+                            }
                         </ScrollView>
                     </View>
                 </Layout>
