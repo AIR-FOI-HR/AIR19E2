@@ -79,9 +79,13 @@ export default class Home extends Component {
   }
 
   componentDidMount = () => {
+    this.getMeals();
+  }
+
+  getMeals = () => {
     let allMeals = this.db.collection('meal');
 
-    allMeals.where('userId', '==', firebase.auth().currentUser.uid).get()
+    allMeals.where('startAt', '>', new Date()).get()
     .then(snapshot => {
       if (snapshot.empty) {
         console.log('No matching documents.');
@@ -136,7 +140,6 @@ export default class Home extends Component {
               onChangeText={this.onSearchChange}
               >
             </Input>
-            {/* <CardList cards={cards} /> */}
             <CardList cards={this.state.meals} style={{height: '50%'}}/>
             </View>
         </Layout>
