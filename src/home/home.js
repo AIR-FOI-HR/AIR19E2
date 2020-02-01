@@ -1,21 +1,76 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { mapping } from '@eva-design/eva';
-import { light as lightTheme } from '@eva-design/eva';
-import {
-  ApplicationProvider, Layout, Text, Icon
-} from 'react-native-ui-kitten';
+import { View, StyleSheet, Text } from 'react-native';
+import { Layout, Button } from 'react-native-ui-kitten';
 import { Input } from 'react-native-elements';
 import firebase from "firebase/app";
+import { CardList } from 'react-native-card-list';
 
 const mealImg = require('../../assets/mealEx.jpg');
 
+const cards = [
+  {
+    id: "0",
+    title: "Starry Night",
+    picture: require('../../assets/mealEx.jpg'),
+    content: <Text>Starry Night</Text>
+  },
+  {
+    id: "1",
+    title: "Wheat Field",
+    picture: require('../../assets/mealEx.jpg'),
+    content: <Text>Wheat Field with Cypresses</Text>
+  },
+  {
+    id: "2",
+    title: "Bedroom in Arles",
+    picture: require('../../assets/mealEx.jpg'),
+    content: <Text>Bedroom in Arles</Text>
+  }
+]
+
+const contentCard = (data, date) => (
+  <View>
+     <View style={{}}>
+        <Text category="h2"  style={{fontWeight: 'bold'}}>Description :</Text>
+        <Text style={{marginLeft: '5%'}}>{data.description.repeat(27)} </Text>
+        {/* <View style={{flex: 1, flexDirection: 'row-reverse'}}>
+            <Text category="s1">1</Text>
+            <Icon name='person' width={25} height={25} fill='gray' />
+        </View> */}
+      </View>
+      <View style={{marginTop: "3%"}}>
+        <Text  category="h2" style={{fontWeight: 'bold'}}>Price between : </Text>
+        <Text style={{marginLeft: '5%'}}>{data.priceMin.toString() + ' - ' + data.priceMax.toString() + '€'}</Text>
+      </View>
+      <View style={{marginTop: '3%'}}>
+        <Text category="h2" style={{fontWeight: 'bold'}}>Duration : </Text>
+        <Text style={{marginLeft: '5%'}}>{data.duration.toString() + 'min'}</Text>
+      </View>
+      <View style={{marginTop: '3%'}}>
+        <Text category="h2" style={{fontWeight: 'bold'}}>Ingredients : </Text>
+        <View style={{ marginLeft: "5%", flexDirection: 'row',flexWrap: 'wrap'}}>
+          {data.ingredient.map((ingr, index) => (
+            <Text>{ingr} - </Text>
+          ))}
+        </View>
+      </View>
+      <View style={{marginTop: '3%'}}>
+        <Text category="h2" style={{fontWeight: 'bold'}}>Date : </Text>
+        <Text style={{marginLeft: '5%'}}>{(date.getMonth() + 1) + "/" + date.getDate() +"/"+ date.getFullYear() +" - "+ date.getHours() +":"+ date.getMinutes()}</Text>
+      </View>
+      <View style={{alignItems: 'center', marginTop: '10%'}}>
+        <Button status='success'>JOIN</Button>
+      </View>
+
+  </View>
+)
 export default class Home extends Component {
 
   constructor(props) {
     super(props);
     this.db = firebase.firestore();
   }
+
 
   state = {
     meals: [],
@@ -33,10 +88,28 @@ export default class Home extends Component {
         return;
       }
       let meals = [];
-      snapshot.forEach(doc => {
-        // console.log(doc.id, '=>', doc.data());
-        meals.push({data: doc.data(), id: doc.id});
+      let i = 0;
+      let obj = {};
+      snapshot.forEach((doc, key) => {
+        //console.log(doc.id, '=>', doc.data());
+        //meals.push({data: doc.data(), id: doc.id});
+        let date = doc.data().startAt.toDate();
+        obj = {
+          id: i.toString(),
+          title: doc.data().name + " BONJOUR ET LA",
+          picture: mealImg,
+          content:  contentCard(doc.data(), date)
+        }
+        // obj = {
+        //   id: "2",
+        //   title: "Bedroom in Arles",
+        //   picture: require('../../assets/mealEx.jpg'),
+        //   content: <Text>Bedroom in Arles</Text>
+        // }
+        meals.push(obj);
+        i++;
       });
+      //console.log(meals);
       this.setState({meals: meals});
     })
     .catch(err => {
@@ -54,7 +127,6 @@ export default class Home extends Component {
 
   render() {
     return (
-      <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <Layout style={styles.container}>
           <View style={styles.view}>
             <Input
@@ -62,41 +134,12 @@ export default class Home extends Component {
               placeholder="Search"
               value={this.state.searchValue}
               onChangeText={this.onSearchChange}
-            >
+              >
             </Input>
-            {/* <View style={{marginTop: 2}}> */}
-              {this.state.meals.length ?
-                this.state.meals.map((data) => (
-                  <TouchableOpacity style={{width: "100%"}} key={data.id} onPress={() => this.props.navigation.navigate('MealEvent', {id: data.id})}>
-                    <View style={{borderBottomColor: "Black", borderBottomWidth: 1}}>
-                      <View style={{borderBottomColor: "Black", borderBottomWidth: 0.5}}>
-                        <View style={{height: "50%"}}>
-                          <Image
-                            style={{height: "100%"}}
-                            source={ data.data.mealImg ? data.data.mealImg : mealImg }
-                            />
-                        </View>
-                        <View style={{flexDirection: "row", flexWrap: 'wrap'}}>
-                          <Text category="h4">{data.data.name}</Text>
-                          <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                            <Text>{data.data.peopleMax}</Text>
-                            <Icon name='person' width={25} height={25} fill='gray' />
-                          </View>
-                        </View>
-                      </View>
-                      <Text>{data.data.description}</Text>
-                    </View>
-                  </TouchableOpacity>
-              )) : <View
-                      key="0"
-                      onPress={() => this.props.navigation.navigate('createMeal')}
-                    ><Text>No meals registered yet ! Create one !</Text>
-                    </View>
-              }
+            {/* <CardList cards={cards} /> */}
+            <CardList cards={this.state.meals} style={{height: '50%'}}/>
             </View>
-          {/* </View>  */}
         </Layout>
-      </ApplicationProvider>
     )
   }
 };
@@ -114,5 +157,5 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginHorizontal: 4,
-  }
+  },
 })
