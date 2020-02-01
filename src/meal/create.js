@@ -17,6 +17,7 @@ const init =  { userId: null,
   priceMin: 0,
   duration: 0,
   address: "",
+  people: 0,
   startAt: new Date(),
   endAt: new Date(),
 
@@ -106,7 +107,7 @@ export default class Create extends Component {
 
     iState.userId = firebase.auth().currentUser.uid;
     this.db.collection('meal').add(iState)
-      .then(ref => { this.props.navigation.navigate('MealEvent'); });
+      .then(ref => { this.props.navigation.navigate('MealEvent', {id: ref.id});});
   };
 
   showDateTimePicker = () => {
@@ -167,7 +168,7 @@ export default class Create extends Component {
                   style={styles.input}
                   value={this.state.priceMin.toString()}
                   onChangeText={(e) => this.onChangeInput(e, "priceMin")}
-                  placeholder='Enter the minimum amount of money you could ask for the meal.' 
+                  placeholder='Enter the minimum amount of money you could ask for the meal.'
                 />
                 <Input
                   keyboardType='numeric'
@@ -190,7 +191,7 @@ export default class Create extends Component {
                         </Button>
                       ))
                     }
-                </View> 
+                </View>
                 <Input
                   label='Ingredient :'
                   style={styles.input}

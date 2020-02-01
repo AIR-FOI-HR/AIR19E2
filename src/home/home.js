@@ -64,7 +64,6 @@ export default class Home extends Component {
               onChangeText={this.onSearchChange}
             >
             </Input>
-            {/* <View style={{marginTop: 2}}> */}
               {this.state.meals.length ?
                 this.state.meals.map((data) => (
                   <TouchableOpacity style={{width: "100%"}} key={data.id} onPress={() => this.props.navigation.navigate('MealEvent', {id: data.id})}>
@@ -79,7 +78,7 @@ export default class Home extends Component {
                         <View style={{flexDirection: "row", flexWrap: 'wrap'}}>
                           <Text category="h4">{data.data.name}</Text>
                           <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                            <Text>{data.data.peopleMax}</Text>
+                            <Text>{data.data.people}/{data.data.peopleMax}</Text>
                             <Icon name='person' width={25} height={25} fill='gray' />
                           </View>
                         </View>
@@ -94,7 +93,6 @@ export default class Home extends Component {
                     </View>
               }
             </View>
-          {/* </View>  */}
         </Layout>
       </ApplicationProvider>
     )

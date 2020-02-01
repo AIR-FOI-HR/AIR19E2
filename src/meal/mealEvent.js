@@ -83,6 +83,10 @@ export default class MealEvent extends Component {
                                 <Text category="s1" appearance='hint'>Duration : </Text>
                                 <Text>{this.state.meal.duration.toString() + 'min'}</Text>
                             </View>
+                            <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
+                                <Text category="s1" appearance='hint'>Address : </Text>
+                                <Text>{this.state.meal.address}</Text>
+                            </View>
                             <Text>Ingredient :</Text>
                             <View style={{marginTop: '2%', flexDirection: 'row',flexWrap: 'wrap'}}>
                                 <Layout style={styles.container2}>
