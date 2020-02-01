@@ -5,6 +5,7 @@ import { mapping, light as lightTheme } from '@eva-design/eva';
 import "firebase/auth";
 import firebase from "firebase/app";
 import 'firebase/firestore';
+import { Avatar } from 'react-native-elements';
 
 const signOutIcon = (style) => (
   <Icon name="log-out-outline" width={32} height={32}></Icon>
@@ -92,45 +93,64 @@ export default class Profil extends Component {
   };
 
   render() {
+    const modal = (
+      <Modal
+      allowBackdrop={true}
+      backdropStyle={styles.backdrop}
+      onBackdropPress={this.toggleModal}
+      visible={this.state.visible}>
+      <Layout
+        level='3'
+        style={styles.modalContainer}>
+        <Text>Hi! Enter your connection detail and change your email.</Text>
+        <Input
+          style={styles.input}
+          value={this.state.password}
+          placeholder='password'
+          icon={this.renderIcon}
+          secureTextEntry={this.state.visiblePassword}
+          onIconPress={this.onIconPress}
+          onChangeText={(e) => this.onChangeInput(e, "password")}
+        />
+        <Input
+          keyboardType='email-address'
+          style={styles.input}
+          value={this.state.newEmail}
+          onChangeText={(e) => this.onChangeInput(e, "newEmail")}
+          placeholder='New email'
+        />
+        <Button onPress={this.changeEmail}>Confirm email change</Button>
+      </Layout>
+    </Modal>
+    )
     return (
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <Layout style={styles.container}>
           <View style={styles.view}>
-          <Modal
-            allowBackdrop={true}
-            backdropStyle={styles.backdrop}
-            onBackdropPress={this.toggleModal}
-            visible={this.state.visible}>
-            <Layout
-              level='3'
-              style={styles.modalContainer}>
-              <Text>Hi! Enter your connection detail and change your email.</Text>
-              <Input
-                style={styles.input}
-                value={this.state.password}
-                placeholder='password'
-                icon={this.renderIcon}
-                secureTextEntry={this.state.visiblePassword}
-                onIconPress={this.onIconPress}
-                onChangeText={(e) => this.onChangeInput(e, "password")}
-              />
-              <Input
-                keyboardType='email-address'
-                style={styles.input}
-                value={this.state.newEmail}
-                onChangeText={(e) => this.onChangeInput(e, "newEmail")}
-                placeholder='New email'
-              />
-              <Button onPress={this.changeEmail}>Confirm email change</Button>
-            </Layout>
-          </Modal>
+            <View style={{marginLeft: '5%', flexDirection: 'row',flexWrap: 'wrap', alignItems: 'center'}}>
+              <Avatar rounded title="MD" size="large"/>
+              <Text category='h5' style={{marginLeft: '5%'}}>{this.state.displayName}</Text>
+            </View>
+            {modal}
             <View  style={styles.Buttons}>
               <Button appearance="ghost" icon={signOutIcon} onPress={this.signOut}></Button>
             </View>
-            <Text>Email: {this.state.email}</Text>
+            <View style={{marginLeft: "5%", width: "80%"}}>
+              <Text>Name</Text>
+              <Input style={{ marginTop: '1%'}} value={this.state.displayName} />
+            </View>
+            <View style={{ marginTop: '2%',marginLeft: "5%", width: "80%"}}>
+              <Text>Email</Text>
+              <Input style={{ marginTop: '1%'}} value={this.state.email} />
+            </View>
+            <View style={{alignItems: 'center', marginTop: '10%'}}>
+              <Button status='success'>Update</Button>
+            </View>
+
+            {/* <Text>Email: {this.state.email}</Text>
             <Button onPress={this.toggleModal}>Change email</Button>
             <Text>Display name:</Text>
-            <Input value={this.state.displayName} onChangeText={(e) => this.onChangeInput(e, "name")} onSubmitEditing={this.changeName} />
+            <Input value={this.state.displayName} onChangeText={(e) => this.onChangeInput(e, "name")} onSubmitEditing={this.changeName} /> */}
           </View>
         </Layout>
       </ApplicationProvider>
