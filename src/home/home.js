@@ -9,7 +9,20 @@ const mealImg = require('../../assets/mealEx.jpg');
 
 const searchIcon = (style) => (
   <Icon name="search-outline" width={20} height={20}></Icon>
-)
+) // this.setState({error: false});
+// this.db.collection("meal")
+// .where("name", ">", [this.state.searchValue])
+// .get()
+// .then((res) => {
+//   console.log(res);
+//   if (res.empty) {
+//     console.log('No matching documents.');
+//     return;
+//   }
+//   res.forEach((doc) => {
+//     console.log(doc.data());
+//   })
+// })
 
 const contentCard = (data, date, present, maxPeople) => (
   <View>
@@ -73,7 +86,8 @@ export default class Home extends Component {
 
     searchValue: '',
     selectedIndex: 1,
-    refreshing: false
+    refreshing: false,
+    error: false,
   }
 
   componentDidMount = () => {
@@ -102,10 +116,47 @@ export default class Home extends Component {
     this.db.collection("meal").doc(meal.id).update(meal);
   }
 
-  getMeals = () => {
+  searchMeal = async () => {
+    if (!this.state.searchValue) {
+      await this.getMeals();
+      this.setState({error: true});
+    }else {
+      //console.log(this.state.meals);
+      await this.getMeals();
+      let toto = [];
+      //this.state.meals.find(meal => meal.title.include(this.state.searchValue));
+      this.state.meals.forEach((res) => {
+        if (res.title.toLowerCase().includes(this.state.searchValue.toLowerCase()))
+          toto.push(res);
+      })
+      toto.forEach((res) =>{
+        console.log(res.title);
+      })
+      this.setState({
+        meals: toto,
+      })
+      console.log(toto);
+      // this.setState({error: false});
+      // this.db.collection("meal")
+      // .where("name", ">", [this.state.searchValue])
+      // .get()
+      // .then((res) => {
+      //   console.log(res);
+      //   if (res.empty) {
+      //     console.log('No matching documents.');
+      //     return;
+      //   }
+      //   res.forEach((doc) => {
+      //     console.log(doc.data());
+      //   })
+      // })
+    }
+  }
+
+  getMeals = async () => {
     let allMeals = this.db.collection('meal');
 
-    allMeals.where('startAt', '>', new Date()).get()
+    await allMeals.where('startAt', '>', new Date()).get()
     .then(snapshot => {
       if (snapshot.empty) {
         console.log('No matching documents.');
@@ -125,7 +176,7 @@ export default class Home extends Component {
 
         let meal = {
           id: doc.id,
-          title: doc.data().name + " BONJOUR ET LA",
+          title: doc.data().name,
           picture: doc.data().mealImg ? doc.data().mealImg : mealImg,
           content: contentCard(doc.data(), date, present, maxPeople),
         }
@@ -149,7 +200,7 @@ export default class Home extends Component {
   onRefresh = async () => {
     this.setState({refreshing : true});
     await this.getMeals()
-    this.setState({refreshing : false});
+    this.setState({refreshing : false,  searchValue: ''});
   }
 
   render() {
@@ -159,12 +210,12 @@ export default class Home extends Component {
             <View style={{ flexDirection: 'row', width: '80%'}}>
               <Input
                 style={styles.input}
-                status='info'
+                status={this.state.error ? 'danger' : 'info'}
                 placeholder="Search"
                 value={this.state.searchValue}
                 onChangeText={this.onSearchChange}
               />
-              <Button status='basic' icon={searchIcon}></Button>
+              <Button status='basic' icon={searchIcon} onPress={this.searchMeal}></Button>
             </View>
           </View>
           <ScrollView style={{marginTop:'3%'}}
