@@ -7,6 +7,8 @@ import firebase from "firebase/app";
 import 'firebase/firestore';
 import { Avatar } from 'react-native-elements';
 import Toast from 'react-native-root-toast';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 const signOutIcon = (style) => (
   <Icon name="log-out-outline" width={32} height={32}></Icon>
@@ -24,8 +26,10 @@ export default class Profil extends Component {
     setSecureTextEntry: true,
     password: "",
     visible: false,
-    visiblePassword: false,
+    visiblePassword: true,
+    spinner: false,
   }
+
 
   onIconPress = () => {
     this.setState({visiblePassword: !this.state.visiblePassword });
@@ -45,19 +49,21 @@ export default class Profil extends Component {
     });
   }
 
-  // componentDidMount() {
-    // this.setState({
-    //   staticName: firebase.auth().currentUser.displayName,
-    //   displayName: firebase.auth().currentUser.displayName,
-    //   email: firebase.auth().currentUser.email,
-    //   newEmail: "",
-    //   letter: firebase.auth().currentUser.displayName.charAt(0).toUpperCase(),
-    //   secureTextEntry: true,
-    //   setSecureTextEntry: true,
-    //   password: "",
-    //   visible: false,
-    // });
-  // }
+  componentDidMount() {
+    console.log(firebase.auth().currentUser.email)
+    this.setState({
+      staticName: firebase.auth().currentUser.displayName,
+      displayName: firebase.auth().currentUser.displayName,
+      email: firebase.auth().currentUser.email,
+      newEmail: "",
+      letter: firebase.auth().currentUser.displayName.charAt(0).toUpperCase(),
+      secureTextEntry: true,
+      setSecureTextEntry: true,
+      password: "",
+      visible: false,
+      spinner: false,
+    });
+  }
 
   onChangeInput = (e, index) => {
     switch (index) {
@@ -90,10 +96,12 @@ export default class Profil extends Component {
     this.setState({visible: !this.state.visible});
   }
 
-  update = () => {
+  update = async () => {
+    this.setState({
+      spinner:true,
+    })
     if (firebase.auth().currentUser.displayName !== this.state.displayName) {
-      firebase.auth().currentUser.updateProfile({displayName: this.state.displayName}).then((res)=> {
-      }).catch((err)=> {
+      await firebase.auth().currentUser.updateProfile({displayName: this.state.displayName}).catch((err)=> {
         console.log(err);
       })
     }
@@ -103,14 +111,13 @@ export default class Profil extends Component {
         user.email,
         this.state.password
       );
-      user.reauthenticateWithCredential(credential).then(function() {
+      await user.reauthenticateWithCredential(credential).then(async function() {
         console.log("reauthentication successful")
         // User re-authenticated.
-        user.updateEmail(this.state.email).then(function() {
+        await user.updateEmail(this.state.email).then(function() {
           console.log("update Email successful")
           // Update successful.
-          this.setState({email: this.state.newEmail});
-          this.toggleModal();
+          //this.toggleModal();
         }.bind(this)).catch(function(error) {
           console.log("update Email failed : " + error)
           // An error happened.
@@ -129,33 +136,61 @@ export default class Profil extends Component {
       backgroundColor: "#71dec7",
       shadow: true
     });
-    // this.componentDidMount();
+    this.componentDidMount();
+    console.log("finis");
   }
 
   toggleModal = () => {
     this.setState({visible: !this.state.visible});
   };
 
-  onIconPress = () => {
-    setSecureTextEntry(!this.state.secureTextEntry);
+  onIconPressSecure = () => {
+    const visiblePassword = !this.state.visiblePassword;
+    this.setState({ visiblePassword });
   };
 
   onChangePassword = (event) => {
     this.setState({password: event});
   }
 
+  confirmChanges = () => {
+    let user = firebase.auth().currentUser;
+    let credential = firebase.auth.EmailAuthProvider.credential(
+      user.email,
+      this.state.password
+    );
+    user.reauthenticateWithCredential(credential).then(function() {
+     this.update();
+    }.bind(this, user)).catch(function(error) {
+      console.log("reauthentication failed : " + error)
+      Toast.show('Password incorrect', {
+        position: -80,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 3,
+        backgroundColor: "#f85a56",
+        shadow: true
+      });
+      // An error happened.
+    });
+  }
+
   renderModalElement = () => (
     <Layout
       style={styles.modalContainer}
       level='3'>
+      <Text category='h4' style={{textAlign:'center'}}>Enter password to confirm changes</Text>
       <Input
         value={this.state.password}
         placeholder='********'
         icon={this.renderIcon}
-        secureTextEntry={this.state.secureTextEntry}
-        onIconPress={this.onIconPress}
+        secureTextEntry={this.state.visiblePassword}
+        onIconPress={this.onIconPressSecure}
         onChangeText={this.onChangePassword}
+        style={{marginTop: '3%'}}
       />
+      <Button status='success' style={{marginTop: '3%'}} onPress={this.confirmChanges}>Confrim</Button>
     </Layout>
   );
 
@@ -169,6 +204,14 @@ export default class Profil extends Component {
             visible={this.state.visible}>
               {this.renderModalElement()}
           </Modal>
+          {this.state.spinner ? 
+            <Spinner
+              visible={this.state.spinner}
+              textContent={'Loading...'}
+              textStyle={ {color: '#FFF'}}
+            />
+          :
+          null}
           <View style={styles.view}>
             <View style={{marginLeft: '5%', flexDirection: 'row',flexWrap: 'wrap', alignItems: 'center'}}>
               <Avatar rounded title={this.state.letter} size="large"/>
@@ -204,6 +247,11 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%'
+  },
+  loader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
   },
   view: {
     flex: 2,
