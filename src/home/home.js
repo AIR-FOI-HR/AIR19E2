@@ -7,30 +7,9 @@ import { CardList } from 'react-native-card-list';
 
 const mealImg = require('../../assets/mealEx.jpg');
 
-const cards = [
-  {
-    id: "0",
-    title: "Starry Night",
-    picture: require('../../assets/mealEx.jpg'),
-    content: <Text>Starry Night</Text>
-  },
-  {
-    id: "1",
-    title: "Wheat Field",
-    picture: require('../../assets/mealEx.jpg'),
-    content: <Text>Wheat Field with Cypresses</Text>
-  },
-  {
-    id: "2",
-    title: "Bedroom in Arles",
-    picture: require('../../assets/mealEx.jpg'),
-    content: <Text>Bedroom in Arles</Text>
-  }
-]
-
-const contentCard = (data, date) => (
+const contentCard = (data, date, present, maxPeople) => (
   <View>
-     <View style={{}}>
+      <View style={{}}>
         <Text category="h2"  style={{fontWeight: 'bold'}}>Description :</Text>
         <Text style={{marginLeft: '5%'}}>{data.description.repeat(27)} </Text>
         {/* <View style={{flex: 1, flexDirection: 'row-reverse'}}>
@@ -50,7 +29,7 @@ const contentCard = (data, date) => (
         <Text category="h2" style={{fontWeight: 'bold'}}>Ingredients : </Text>
         <View style={{ marginLeft: "5%", flexDirection: 'row',flexWrap: 'wrap'}}>
           {data.ingredient.map((ingr, index) => (
-            <Text>{ingr} - </Text>
+            <Text key={index}>{ingr} - </Text>
           ))}
         </View>
       </View>
@@ -59,11 +38,25 @@ const contentCard = (data, date) => (
         <Text style={{marginLeft: '5%'}}>{(date.getMonth() + 1) + "/" + date.getDate() +"/"+ date.getFullYear() +" - "+ date.getHours() +":"+ date.getMinutes()}</Text>
       </View>
       <View style={{alignItems: 'center', marginTop: '10%'}}>
-        <Button status='success'>JOIN</Button>
+        {
+          present ?
+            <Button
+                onPress={() => this.quitMeal()}
+                status='danger'>
+                Quit Meal !
+            </Button>
+          :
+            <Button
+                disabled={maxPeople}
+                onPress={() => this.joinMeal()}
+                status='success'>
+                Join meal !
+            </Button>
+        }
       </View>
-
   </View>
 )
+
 export default class Home extends Component {
 
   constructor(props) {
@@ -71,15 +64,37 @@ export default class Home extends Component {
     this.db = firebase.firestore();
   }
 
-
   state = {
     meals: [],
+
     searchValue: '',
     selectedIndex: 1,
   }
 
   componentDidMount = () => {
     this.getMeals();
+  }
+
+  joinMeal = () => {
+    meal = this.state.meal;
+
+    meal.peopleNbr += 1;
+    meal.peoples.push(firebase.auth().currentUser.uid);
+
+    this.setState({present: true});
+
+    this.db.collection("meal").doc(meal.id).update(meal);
+  }
+
+  quitMeal = () => {
+    meal = this.state.meal;
+
+    meal.peopleNbr -= 1;
+    meal.peoples.splice(meal.peoples.indexOf(firebase.auth().currentUser.uid), 1);
+
+    this.setState({present: false});
+
+    this.db.collection("meal").doc(meal.id).update(meal);
   }
 
   getMeals = () => {
@@ -92,28 +107,26 @@ export default class Home extends Component {
         return;
       }
       let meals = [];
-      let i = 0;
-      let obj = {};
-      snapshot.forEach((doc, key) => {
-        //console.log(doc.id, '=>', doc.data());
-        //meals.push({data: doc.data(), id: doc.id});
+      snapshot.forEach((doc) => {
         let date = doc.data().startAt.toDate();
-        obj = {
-          id: i.toString(),
+        let present = false;
+        let maxPeople = false;
+
+
+        if (doc.data().peoples.indexOf(firebase.auth().currentUser.uid) != -1)
+            present = true;
+        else if (doc.data().peopleNbr === doc.data().peopleMax)
+            maxPeople = true;
+
+        let meal = {
+          id: doc.id,
           title: doc.data().name + " BONJOUR ET LA",
-          picture: mealImg,
-          content:  contentCard(doc.data(), date)
+          picture: doc.data().mealImg ? doc.data().mealImg : mealImg,
+          content: contentCard(doc.data(), date, present, maxPeople),
         }
-        // obj = {
-        //   id: "2",
-        //   title: "Bedroom in Arles",
-        //   picture: require('../../assets/mealEx.jpg'),
-        //   content: <Text>Bedroom in Arles</Text>
-        // }
-        meals.push(obj);
-        i++;
+
+        meals.push(meal);
       });
-      //console.log(meals);
       this.setState({meals: meals});
     })
     .catch(err => {
@@ -131,18 +144,18 @@ export default class Home extends Component {
 
   render() {
     return (
-        <Layout style={styles.container}>
-          <View style={styles.view}>
-            <Input
-              style={styles.input}
-              placeholder="Search"
-              value={this.state.searchValue}
-              onChangeText={this.onSearchChange}
-              >
-            </Input>
-            <CardList cards={this.state.meals} style={{height: '50%'}}/>
-            </View>
-        </Layout>
+      <Layout style={styles.container}>
+        <View style={styles.view}>
+          <Input
+            style={styles.input}
+            placeholder="Search"
+            value={this.state.searchValue}
+            onChangeText={this.onSearchChange}
+            >
+          </Input>
+          <CardList cards={this.state.meals} style={{height: '50%'}}/>
+          </View>
+      </Layout>
     )
   }
 };
