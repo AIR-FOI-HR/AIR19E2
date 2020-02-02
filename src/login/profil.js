@@ -6,25 +6,30 @@ import "firebase/auth";
 import firebase from "firebase/app";
 import 'firebase/firestore';
 import { Avatar } from 'react-native-elements';
+import Toast from 'react-native-root-toast';
+
 
 const signOutIcon = (style) => (
   <Icon name="log-out-outline" width={32} height={32}></Icon>
 )
 
-export default class Profil extends Component {
 
+export default class Profil extends Component {
+  
   state = {
+    staticName: firebase.auth().currentUser.displayName,
     displayName: firebase.auth().currentUser.displayName,
     email: firebase.auth().currentUser.email,
     newEmail: "",
-    password: "",
-    visible: false,
-    visiblePassword: true,
+    letter: firebase.auth().currentUser.displayName.charAt(0).toUpperCase(),
   }
 
   onIconPress = () => {
     this.setState({visiblePassword: !this.state.visiblePassword });
   };
+  renderIcon = (style) => (
+    <Icon {...style} name={this.state.secureTextEntry ? 'eye-off' : 'eye'}/>
+  );
 
   signOut = () => {
     firebase.auth().signOut()
@@ -33,6 +38,20 @@ export default class Profil extends Component {
       this.props.navigation.navigate('Auth');
     }.bind(this)).catch(function(error) {
       console.log("No signout : " + error);
+    });
+  }
+
+  componentDidMount() {
+    this.setState({
+      staticName: firebase.auth().currentUser.displayName,
+      displayName: firebase.auth().currentUser.displayName,
+      email: firebase.auth().currentUser.email,
+      newEmail: "",
+      letter: firebase.auth().currentUser.displayName.charAt(0).toUpperCase(),
+      secureTextEntry: true,
+      setSecureTextEntry: true,
+      password: "",
+      visible: true,
     });
   }
 
@@ -54,97 +73,120 @@ export default class Profil extends Component {
         break;
     }
   }
-
-  changeName = () => {
-    firebase.auth().currentUser.updateProfile({displayName: this.displayName}).then(function() {
-      console.log("update successful");
-    }).catch(function(error) {
-      console.log("Update failed : ", error);
-    });
+  
+  onChangeEmail = (event) => {
+    this.setState({email: event});
   }
 
-  changeEmail = () => {
-    let user = firebase.auth().currentUser;
-    let credential = firebase.auth.EmailAuthProvider.credential(
-      user.email,
-      this.state.password
-    );
+  onChangeName = (event) => {
+    this.setState({displayName: event});
+  }
 
-    user.reauthenticateWithCredential(credential).then(function() {
-      console.log("reauthentication successful")
-      // User re-authenticated.
-      user.updateEmail(this.state.newEmail).then(function() {
-        console.log("update Email successful")
-        // Update successful.
-        this.setState({email: this.state.newEmail});
-        this.toggleModal();
-      }.bind(this)).catch(function(error) {
-        console.log("update Email failed : " + error)
+  check = () => {
+    this.setState({visible: true});
+  }
+
+  update = () => {
+    if (firebase.auth().currentUser.displayName !== this.state.displayName) {
+      firebase.auth().currentUser.updateProfile({displayName: this.state.displayName}).then((res)=> {
+      }).catch((err)=> {
+        console.log(err);
+      })
+    }
+    if (firebase.auth().currentUser.email !== this.state.email) {
+      let user = firebase.auth().currentUser;
+      let credential = firebase.auth.EmailAuthProvider.credential(
+        user.email,
+        this.state.password
+      );
+      user.reauthenticateWithCredential(credential).then(function() {
+        console.log("reauthentication successful")
+        // User re-authenticated.
+        user.updateEmail(this.state.email).then(function() {
+          console.log("update Email successful")
+          // Update successful.
+          this.setState({email: this.state.newEmail});
+          this.toggleModal();
+        }.bind(this)).catch(function(error) {
+          console.log("update Email failed : " + error)
+          // An error happened.
+        });
+      }.bind(this, user)).catch(function(error) {
+        console.log("reauthentication failed : " + error)
         // An error happened.
       });
-    }.bind(this, user)).catch(function(error) {
-      console.log("reauthentication failed : " + error)
-      // An error happened.
+    }
+    Toast.show('Updated', {
+      position: -80,
+      shadow: true,
+      animation: true,
+      hideOnPress: true,
+      delay: 3,
+      backgroundColor: "#71dec7",
+      shadow: true
     });
+    this.componentDidMount();
   }
 
   toggleModal = () => {
     this.setState({visible: !this.state.visible});
   };
 
-  render() {
-    const modal = (
-      <Modal
-      allowBackdrop={true}
-      backdropStyle={styles.backdrop}
-      onBackdropPress={this.toggleModal}
-      visible={this.state.visible}>
-      <Layout
-        level='3'
-        style={styles.modalContainer}>
-        <Text>Hi! Enter your connection detail and change your email.</Text>
-        <Input
-          style={styles.input}
+  onIconPress = () => {
+    setSecureTextEntry(!this.state.secureTextEntry);
+  };
+
+  onChangePassword = (event) => {
+    this.setState({password: event});
+  }
+
+  renderModalElement = () => (
+    <Layout level='3'>
+       <Input
           value={this.state.password}
-          placeholder='password'
+          placeholder='********'
           icon={this.renderIcon}
-          secureTextEntry={this.state.visiblePassword}
+          secureTextEntry={this.state.secureTextEntry}
           onIconPress={this.onIconPress}
-          onChangeText={(e) => this.onChangeInput(e, "password")}
-        />
-        <Input
-          keyboardType='email-address'
-          style={styles.input}
-          value={this.state.newEmail}
-          onChangeText={(e) => this.onChangeInput(e, "newEmail")}
-          placeholder='New email'
-        />
-        <Button onPress={this.changeEmail}>Confirm email change</Button>
-      </Layout>
-    </Modal>
-    )
+          onChangeText={this.onChangePassword}
+      />
+    </Layout>
+  );
+
+  render() {
     return (
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <Layout style={styles.container}>
+          {/* <Modal visible={this.state.visible}>
+            {this.renderModalElement()}
+          </Modal> */}
+          <Modal visible={true}>
+          <Layout
+            level='3'>
+            <Text>Hi! This is modal</Text>
+            <Button>
+              DISMISS
+            </Button>
+          </Layout>
+          </Modal>
           <View style={styles.view}>
             <View style={{marginLeft: '5%', flexDirection: 'row',flexWrap: 'wrap', alignItems: 'center'}}>
-              <Avatar rounded title="MD" size="large"/>
-              <Text category='h5' style={{marginLeft: '5%'}}>{this.state.displayName}</Text>
+              <Avatar rounded title={this.state.letter} size="large"/>
+              <Text category='h5' style={{marginLeft: '5%'}}>{this.state.staticName}</Text>
             </View>
-            {modal}
             <View  style={styles.Buttons}>
               <Button appearance="ghost" icon={signOutIcon} onPress={this.signOut}></Button>
             </View>
             <View style={{marginLeft: "5%", width: "80%"}}>
               <Text>Name</Text>
-              <Input style={{ marginTop: '1%'}} value={this.state.displayName} />
+              <Input style={{ marginTop: '1%'}} onChangeText={this.onChangeName} value={this.state.displayName} />
             </View>
             <View style={{ marginTop: '2%',marginLeft: "5%", width: "80%"}}>
               <Text>Email</Text>
-              <Input style={{ marginTop: '1%'}} value={this.state.email} />
+              <Input onChangeText={this.onChangeEmail} style={{ marginTop: '1%'}} value={this.state.email} />
             </View>
             <View style={{alignItems: 'center', marginTop: '10%'}}>
-              <Button status='success'>Update</Button>
+              <Button status='success' onPress={this.check}>Update</Button>
             </View>
 
             {/* <Text>Email: {this.state.email}</Text>
