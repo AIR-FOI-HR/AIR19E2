@@ -9,7 +9,8 @@ import {KeyboardAvoidingView} from 'react-native';
 const mode = 'datetime';
 const mealLogo = require('../../assets/lunch-box.png');
 
-const init =  { userId: null,
+const init =  {
+  userId: null,
   name: "",
   peopleMax: 0,
   description: "",

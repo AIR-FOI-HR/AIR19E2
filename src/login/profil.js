@@ -8,25 +8,29 @@ import 'firebase/firestore';
 import { Avatar } from 'react-native-elements';
 import Toast from 'react-native-root-toast';
 
-
 const signOutIcon = (style) => (
   <Icon name="log-out-outline" width={32} height={32}></Icon>
 )
 
-
 export default class Profil extends Component {
-  
+
   state = {
     staticName: firebase.auth().currentUser.displayName,
     displayName: firebase.auth().currentUser.displayName,
     email: firebase.auth().currentUser.email,
     newEmail: "",
     letter: firebase.auth().currentUser.displayName.charAt(0).toUpperCase(),
+    secureTextEntry: true,
+    setSecureTextEntry: true,
+    password: "",
+    visible: false,
+    visiblePassword: false,
   }
 
   onIconPress = () => {
     this.setState({visiblePassword: !this.state.visiblePassword });
   };
+
   renderIcon = (style) => (
     <Icon {...style} name={this.state.secureTextEntry ? 'eye-off' : 'eye'}/>
   );
@@ -41,19 +45,19 @@ export default class Profil extends Component {
     });
   }
 
-  componentDidMount() {
-    this.setState({
-      staticName: firebase.auth().currentUser.displayName,
-      displayName: firebase.auth().currentUser.displayName,
-      email: firebase.auth().currentUser.email,
-      newEmail: "",
-      letter: firebase.auth().currentUser.displayName.charAt(0).toUpperCase(),
-      secureTextEntry: true,
-      setSecureTextEntry: true,
-      password: "",
-      visible: true,
-    });
-  }
+  // componentDidMount() {
+    // this.setState({
+    //   staticName: firebase.auth().currentUser.displayName,
+    //   displayName: firebase.auth().currentUser.displayName,
+    //   email: firebase.auth().currentUser.email,
+    //   newEmail: "",
+    //   letter: firebase.auth().currentUser.displayName.charAt(0).toUpperCase(),
+    //   secureTextEntry: true,
+    //   setSecureTextEntry: true,
+    //   password: "",
+    //   visible: false,
+    // });
+  // }
 
   onChangeInput = (e, index) => {
     switch (index) {
@@ -73,7 +77,7 @@ export default class Profil extends Component {
         break;
     }
   }
-  
+
   onChangeEmail = (event) => {
     this.setState({email: event});
   }
@@ -83,7 +87,7 @@ export default class Profil extends Component {
   }
 
   check = () => {
-    this.setState({visible: true});
+    this.setState({visible: !this.state.visible});
   }
 
   update = () => {
@@ -125,7 +129,7 @@ export default class Profil extends Component {
       backgroundColor: "#71dec7",
       shadow: true
     });
-    this.componentDidMount();
+    // this.componentDidMount();
   }
 
   toggleModal = () => {
@@ -141,14 +145,16 @@ export default class Profil extends Component {
   }
 
   renderModalElement = () => (
-    <Layout level='3'>
-       <Input
-          value={this.state.password}
-          placeholder='********'
-          icon={this.renderIcon}
-          secureTextEntry={this.state.secureTextEntry}
-          onIconPress={this.onIconPress}
-          onChangeText={this.onChangePassword}
+    <Layout
+      style={styles.modalContainer}
+      level='3'>
+      <Input
+        value={this.state.password}
+        placeholder='********'
+        icon={this.renderIcon}
+        secureTextEntry={this.state.secureTextEntry}
+        onIconPress={this.onIconPress}
+        onChangeText={this.onChangePassword}
       />
     </Layout>
   );
@@ -157,17 +163,11 @@ export default class Profil extends Component {
     return (
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <Layout style={styles.container}>
-          {/* <Modal visible={this.state.visible}>
-            {this.renderModalElement()}
-          </Modal> */}
-          <Modal visible={true}>
-          <Layout
-            level='3'>
-            <Text>Hi! This is modal</Text>
-            <Button>
-              DISMISS
-            </Button>
-          </Layout>
+          <Modal allowBackdrop={true}
+            backdropStyle={styles.backdrop}
+            onBackdropPress={this.toggleModal}
+            visible={this.state.visible}>
+              {this.renderModalElement()}
           </Modal>
           <View style={styles.view}>
             <View style={{marginLeft: '5%', flexDirection: 'row',flexWrap: 'wrap', alignItems: 'center'}}>
