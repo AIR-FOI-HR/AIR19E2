@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text,  ScrollView, RefreshControl, SafeAreaView } from 'react-native';
 import { Layout, Button } from 'react-native-ui-kitten';
 import { Input } from 'react-native-elements';
 import firebase from "firebase/app";
@@ -69,6 +69,7 @@ export default class Home extends Component {
 
     searchValue: '',
     selectedIndex: 1,
+    refreshing: false
   }
 
   componentDidMount = () => {
@@ -141,21 +142,35 @@ export default class Home extends Component {
   onSearchChange = (value) => {
     this.setState({ searchValue: value });
   }
+  onRefresh = async () => {
+    this.setState({refreshing : true});
+    await this.getMeals()
+    this.setState({refreshing : false});
+  }
 
   render() {
     return (
-      <Layout style={styles.container}>
-        <View style={styles.view}>
-          <Input
-            style={styles.input}
-            placeholder="Search"
-            value={this.state.searchValue}
-            onChangeText={this.onSearchChange}
-            >
-          </Input>
-          <CardList cards={this.state.meals} style={{height: '50%'}}/>
-          </View>
-      </Layout>
+      <SafeAreaView style={styles.container}>
+          <ScrollView
+            contentContainerStyle={styles.scrollView}
+            refreshControl={
+              <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+            }
+          >
+              <Layout style={styles.container}>
+                <View style={styles.view}>
+                  <Input
+                    style={styles.input}
+                    placeholder="Search"
+                    value={this.state.searchValue}
+                    onChangeText={this.onSearchChange}
+                    >
+                  </Input>
+                  <CardList cards={this.state.meals} style={{height: '50%'}}/>
+                  </View>
+              </Layout>
+          </ScrollView>
+      </SafeAreaView>
     )
   }
 };
