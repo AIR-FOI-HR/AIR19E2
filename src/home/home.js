@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text,  ScrollView, RefreshControl, SafeAreaView } from 'react-native';
-import { Layout, Button } from 'react-native-ui-kitten';
-import { Input } from 'react-native-elements';
+import { Layout, Button, Input, Icon } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
+import { mapping, light as lightTheme } from '@eva-design/eva';
 import { CardList } from 'react-native-card-list';
 
 const mealImg = require('../../assets/mealEx.jpg');
+
+const searchIcon = (style) => (
+  <Icon name="search-outline" width={20} height={20}></Icon>
+)
 
 const contentCard = (data, date, present, maxPeople) => (
   <View>
@@ -151,23 +155,28 @@ export default class Home extends Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-          <ScrollView
+          <View style={{marginTop:'15%',  alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', width: '80%'}}>
+              <Input
+                style={styles.input}
+                status='info'
+                placeholder="Search"
+                value={this.state.searchValue}
+                onChangeText={this.onSearchChange}
+              />
+              <Button status='basic' icon={searchIcon}></Button>
+            </View>
+          </View>
+          <ScrollView style={{marginTop:'3%'}}
             contentContainerStyle={styles.scrollView}
             refreshControl={
               <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
             }
           >
               <Layout style={styles.container}>
-                <View style={styles.view}>
-                  <Input
-                    style={styles.input}
-                    placeholder="Search"
-                    value={this.state.searchValue}
-                    onChangeText={this.onSearchChange}
-                    >
-                  </Input>
+                <View >
                   <CardList cards={this.state.meals} style={{height: '50%'}}/>
-                  </View>
+                </View>
               </Layout>
           </ScrollView>
       </SafeAreaView>
@@ -188,5 +197,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginHorizontal: 4,
+    width: '50%',
   },
 })
