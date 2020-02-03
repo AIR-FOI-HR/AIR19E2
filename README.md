@@ -40,7 +40,9 @@ In the repositorie folder run:
 * [IOS](https://apps.apple.com/app/apple-store/id982107779)
 * [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=www)
 
-Then scan the QR code
+## Run the app
+Start the project using `npm start` command and follow the instructions in the terminal
+
 
 ## Contribution
 Antoine Briaux - Joffrey Devautour - Pierre Leriche - Yaniss Pheron
