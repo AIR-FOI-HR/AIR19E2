@@ -8,6 +8,10 @@ import 'firebase/firestore';
 import { Avatar } from 'react-native-elements';
 import Toast from 'react-native-root-toast';
 import Spinner from 'react-native-loading-spinner-overlay';
+import QrCode from './qrCode';
+import * as Permissions from 'expo-permissions';
+
+
 
 
 const signOutIcon = (style) => (
@@ -50,6 +54,7 @@ export default class Profil extends Component {
     visible: false,
     visibleHistory: false,
     history: [],
+    camera: false,
   }
 
 
@@ -71,8 +76,12 @@ export default class Profil extends Component {
     });
   }
 
-  componentDidMount() {
-    console.log(firebase.auth().currentUser.email)
+
+  async componentDidMount() {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    if (status !== 'granted') {
+      alert('Hey! You might want to enable notifications for my app, they are good.');
+    }
     this.setState({
       staticName: firebase.auth().currentUser.displayName,
       displayName: firebase.auth().currentUser.displayName,
@@ -179,6 +188,11 @@ export default class Profil extends Component {
     this.setState({password: event});
   }
 
+  onCloseCamera = () => {
+    this.setState({camera: false})
+    console.log("close");
+  }
+
   confirmChanges = () => {
     let user = firebase.auth().currentUser;
     let credential = firebase.auth.EmailAuthProvider.credential(
@@ -203,7 +217,6 @@ export default class Profil extends Component {
   }
 
   getMealsJoined = () => {
-    console.log(firebase.auth().currentUser.uid);
     firebase.firestore().collection('meal')
       .where('peoples', 'array-contains', firebase.auth().currentUser.uid)
       .get()
@@ -224,7 +237,6 @@ export default class Profil extends Component {
         this.setState({
           history: history,
         })
-        console.log(history);
       })
   }
 
@@ -273,13 +285,19 @@ export default class Profil extends Component {
     if (index === 0) {
       this.setState({visibleHistory: !this.state.visibleHistory});
     }
+    if (index === 1) {
+      this.setState({camera: true})
+    }
   }
+
 
   render() {
     return (
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
+          {this.state.camera ? 
+            <QrCode onCloseCamera={() => this.onCloseCamera()}/>
+          :
         <Layout style={styles.container}>
-
 
           <Modal allowBackdrop={true}
             backdropStyle={styles.backdrop}
@@ -297,12 +315,12 @@ export default class Profil extends Component {
           </Modal>
           {this.state.spinner ? 
             <Spinner
-              visible={this.state.spinner}
-              textContent={'Loading...'}
-              textStyle={ {color: '#FFF'}}
+            visible={this.state.spinner}
+            textContent={'Loading...'}
+            textStyle={ {color: '#FFF'}}
             />
-          :
-          null}
+            :
+            null}
           <View style={styles.view}>
             <View style={{marginLeft: '5%', flexDirection: 'row',flexWrap: 'wrap', alignItems: 'center'}}>
               <Avatar rounded title={this.state.letter} size="large"/>
@@ -337,6 +355,7 @@ export default class Profil extends Component {
             <Input value={this.state.displayName} onChangeText={(e) => this.onChangeInput(e, "name")} onSubmitEditing={this.changeName} /> */}
           </View>
         </Layout>
+        }
       </ApplicationProvider>
     );
   }
