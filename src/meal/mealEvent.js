@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ImageBackground, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, ImageBackground, TouchableWithoutFeedback, Image } from 'react-native';
 import { Layout, Button, Text, Icon, Modal } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
 import QRCode from 'react-native-qrcode';
 //import QRCode from 'react-native-qrcode-generator'
 //import QRCode from 'react-native-qrcode-svg'
 import { joinMeal } from "../common/common";
+import axios from 'axios';
 
 const mealImg = require('../../assets/mealEx.jpg');
 
@@ -20,13 +21,6 @@ export default class MealEvent extends Component {
         present: false,
         maxPeople: false,
         visibleQR: false,
-    }
-
-    componentDidMount = () => {
-        if (this.props.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1)
-            this.setState({present: true});
-        else if ( this.props.meal.peopleNbr >= this.props.meal.peopleMax)
-            this.setState({maxPeople: true});
     }
 
     joinMeal() {
@@ -94,9 +88,12 @@ export default class MealEvent extends Component {
                 </TouchableWithoutFeedback>
                 { this.state.display ?
                     <View style={styles.view}>
-                        <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
-                                {/* <View style={{flex:1, marginTop: "10%"}}>
-                                </View> */} 
+                        <View style={{flexDirection: 'row',flexWrap: 'wrap', marginTop: '3%'}}>
+                            <View style={{flex:1}}>
+                                <Image
+                                    style={{width: 100, height: 100}}
+                                    source={{uri: 'http://api.qrserver.com/v1/create-qr-code/?data=' + this.props.meal.id + '&size=150x150'}} />
+                            </View>
                             <View style={{flex: 1, flexDirection: 'row-reverse'}}>
                                 <Text category="s1">{this.props.meal.peopleNbr}/{this.props.meal.peopleMax}</Text>
                                 <Icon name='person' width={25} height={25} fill='gray' />
@@ -132,16 +129,9 @@ export default class MealEvent extends Component {
                             }
                             </Layout>
                         </View>
-                        <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
-                            <Text
-                            style={styles.input}
-                        >
+                        <Text style={styles.input}>
                             {"Start at : " + (this.props.meal.startAt.getMonth() + 1) + "/" + this.props.meal.startAt.getDate() +"/"+ this.props.meal.startAt.getFullYear() +" - "+ this.props.meal.startAt.getHours() +":"+ this.props.meal.startAt.getMinutes()}
                         </Text>
-                            <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                                <Button status='info' onPress={this.qrCode}> QrCode</Button>
-                            </View>
-                        </View>
                         <View style={{marginTop: '10%'}}>
 
                         {
