@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { View, ScrollView, StyleSheet, Image } from 'react-native';
-import { mapping } from '@eva-design/eva';
-import { light as lightTheme } from '@eva-design/eva';
-import { ApplicationProvider, Layout, Button, Text, Icon } from 'react-native-ui-kitten';
+import { View, StyleSheet, ImageBackground, TouchableWithoutFeedback } from 'react-native';
+import { Layout, Button, Text, Icon } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
-
-import MapView from 'react-native-maps';
 
 const mealImg = require('../../assets/mealEx.jpg');
 
@@ -16,46 +12,18 @@ export default class MealEvent extends Component {
     }
 
     state = {
-        meal: {
-            name: "",
-            peopleMax: 0,
-            peopleNbr: 0,
-            description: "",
-            priceMax: 0,
-            priceMin: 0,
-            duration: 0,
-            address: "",
-            startAt: new Date(),
-            endAt: new Date(),
-            peoples: [],
+        meal: this.props.meal,
 
-            ingredient: [],
-
-        },
+        display: false,
         present: false,
         maxPeople: false,
-        visible: false
     }
 
     componentDidMount = () => {
-        let meal = this.db.collection('meal').doc(this.props.navigation.getParam('id', 'NO-ID')).get();
-        meal.then(function(doc) {
-            if (doc.exists) {
-                let meal = doc.data();
-
-                meal.startAt = meal.startAt.toDate();
-                meal.id = doc.id;
-                this.setState({meal: meal});
-                if (this.state.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1)
-                    this.setState({present: true});
-                else if ( this.state.meal.peopleNbr === this.state.meal.peopleMax)
-                    this.setState({maxPeople: true});
-            } else {
-                console.log("No such document!");
-            }
-        }.bind(this)).catch(function(error) {
-            console.log("Error getting document:", error);
-        });
+        if (this.state.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1)
+            this.setState({present: true});
+        else if ( this.state.meal.peopleNbr >= this.state.meal.peopleMax)
+            this.setState({maxPeople: true});
     }
 
     joinMeal() {
@@ -65,8 +33,6 @@ export default class MealEvent extends Component {
         meal.peoples.push(firebase.auth().currentUser.uid);
 
         this.setState({present: true});
-
-        console.log(meal);
 
         this.db.collection("meal").doc(meal.id).update(meal);
     }
@@ -79,88 +45,84 @@ export default class MealEvent extends Component {
 
         this.setState({present: false});
 
-        console.log(meal);
-
         this.db.collection("meal").doc(meal.id).update(meal);
+    }
+
+    displayHandle = () => {
+        this.setState({display: !this.state.display});
     }
 
     render() {
         return (
-            <ApplicationProvider mapping={mapping} theme={lightTheme}>
-                <Layout style={styles.container}>
+            <View style={{width: "95%", margin: "2%"}}>
+                <TouchableWithoutFeedback onPress={() => this.displayHandle()}>
+                    <ImageBackground imageStyle={{ borderRadius: 25 }} style={{height: 200, width: "100%"}} source={this.state.meal.mealImg ? this.state.meal.mealImg : mealImg}>
+                        <Text style={{color: "white", textAlign: "center"}} category="h1">{this.state.meal.name}</Text>
+                    </ImageBackground>
+                </TouchableWithoutFeedback>
+                { this.state.display ?
                     <View style={styles.view}>
-                        <View style={{marginTop: '10%', height: "40%"}}>
-                            <Image
-                                style={{width: "100%", height: "100%"}}
-                                source={mealImg}
-                            />
+                        <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
+                            <View style={{flex: 1, flexDirection: 'row-reverse'}}>
+                                <Text category="s1">{this.state.meal.peopleNbr}/{this.state.meal.peopleMax}</Text>
+                                <Icon name='person' width={25} height={25} fill='gray' />
+                            </View>
                         </View>
-                        <ScrollView contentContainerStyle={styles.ScrollView} showsVerticalScrollIndicator={false}>
-                            <View style={{flexDirection: 'row',flexWrap: 'wrap'}}>
-                                <Text category="h4">{this.state.meal.name}</Text>
-                                <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                                    <Text category="s1">{this.state.meal.peopleNbr}/{this.state.meal.peopleMax}</Text>
-                                    <Icon name='person' width={25} height={25} fill='gray' />
-                                </View>
-                            </View>
-                            <View style={{marginTop: '2%'}}>
-                                <Text  category="s1" appearance='hint'>Description : </Text>
-                                <Text style={{marginLeft: '10%'}}>{ this.state.meal.description}</Text>
-                            </View>
-                            <View style={{marginTop: '2%'}}>
-                                <Text  category="s1" appearance='hint'>Price between : </Text>
-                                <Text style={{marginLeft: '10%'}}>{this.state.meal.priceMin.toString() + ' - ' + this.state.meal.priceMax.toString() + '€'}</Text>
-                            </View>
-                            <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
-                                <Text category="s1" appearance='hint'>Duration : </Text>
-                                <Text>{this.state.meal.duration.toString() + 'min'}</Text>
-                            </View>
-                            <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
-                                <Text category="s1" appearance='hint'>Address : </Text>
-                                <Text>{this.state.meal.address}</Text>
-                            </View>
-                            <Text>Ingredient :</Text>
-                            <View style={{marginTop: '2%', flexDirection: 'row',flexWrap: 'wrap'}}>
-                                <Layout style={styles.container2}>
-                                {
-                                    this.state.meal.ingredient.map((txt, index) => (
-                                        <Layout key={index} level='1' style={styles.layout}>
-                                            {/* /<Card> */}
-                                                <Text>
-                                                    {txt}
-                                                </Text>
-                                            {/* </Card> */}
-                                        </Layout>
-                                    ))
-                                }
-                                </Layout>
-                            </View>
-                            <Text
-                                style={styles.input}
-                            >
-                                {"Start at : " + (this.state.meal.startAt.getMonth() + 1) + "/" + this.state.meal.startAt.getDate() +"/"+ this.state.meal.startAt.getFullYear() +" - "+ this.state.meal.startAt.getHours() +":"+ this.state.meal.startAt.getMinutes()}
-                            </Text>
+                        <View style={{marginTop: '2%'}}>
+                            <Text  category="s1" appearance='hint'>Description : </Text>
+                            <Text style={{marginLeft: '10%'}}>{ this.state.meal.description}</Text>
+                        </View>
+                        <View style={{marginTop: '2%'}}>
+                            <Text  category="s1" appearance='hint'>Price between : </Text>
+                            <Text style={{marginLeft: '10%'}}>{this.state.meal.priceMin.toString() + ' - ' + this.state.meal.priceMax.toString() + '€'}</Text>
+                        </View>
+                        <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
+                            <Text category="s1" appearance='hint'>Duration : </Text>
+                            <Text>{this.state.meal.duration.toString() + 'min'}</Text>
+                        </View>
+                        <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
+                            <Text category="s1" appearance='hint'>Address : </Text>
+                            <Text>{this.state.meal.address}</Text>
+                        </View>
+                        <Text>Ingredient :</Text>
+                        <View style={{marginTop: '2%', flexDirection: 'row',flexWrap: 'wrap'}}>
+                            <Layout style={styles.container2}>
                             {
-                                this.state.present ?
-                                    <Button
-                                        onPress={() => this.quitMeal()}
-                                        style={styles.button}
-                                        status='danger'>
-                                        Quit Meal !
-                                    </Button>
-                                :
-                                    <Button
-                                        disabled={this.state.maxPeople}
-                                        onPress={() => this.joinMeal()}
-                                        style={styles.button}
-                                        status='info'>
-                                        Join meal !
-                                    </Button>
+                                this.state.meal.ingredient.map((txt, index) => (
+                                    <Layout key={index} level='1' style={styles.layout}>
+                                            <Text>
+                                                {txt}
+                                            </Text>
+                                    </Layout>
+                                ))
                             }
-                        </ScrollView>
-                    </View>
-                </Layout>
-            </ApplicationProvider>
+                            </Layout>
+                        </View>
+                        <Text
+                            style={styles.input}
+                        >
+                            {"Start at : " + (this.state.meal.startAt.getMonth() + 1) + "/" + this.state.meal.startAt.getDate() +"/"+ this.state.meal.startAt.getFullYear() +" - "+ this.state.meal.startAt.getHours() +":"+ this.state.meal.startAt.getMinutes()}
+                        </Text>
+                        {
+                            this.state.present ?
+                                <Button
+                                    onPress={() => this.quitMeal()}
+                                    style={styles.button}
+                                    status='danger'>
+                                    Quit Meal !
+                                </Button>
+                            :
+                                <Button
+                                    disabled={this.state.maxPeople}
+                                    onPress={() => this.joinMeal()}
+                                    style={styles.button}
+                                    status='info'>
+                                    Join meal !
+                                </Button>
+                        }
+                    </View> : null
+                }
+            </View>
         )
     }
 };
