@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, ScrollView, RefreshControl, SafeAreaView, TouchableNativeFeedback } from 'react-native';
+import { View, Image, StyleSheet, ScrollView, RefreshControl, SafeAreaView, YellowBox } from 'react-native';
 import { Layout, Button, Icon, Input, Text } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
 import { CardList } from 'react-native-card-list';
 import QRCode from 'react-native-qrcode';
 //import QRCode from 'react-native-qrcode-generator';
 //import QRCode from 'react-native-qrcode-svg';
-import MealEvent from '../meal/mealEvent'
+import MealEvent from '../meal/mealEvent';
+import _ from 'lodash';
 
 
+YellowBox.ignoreWarnings(['Setting a timer']);
+const _console = _.clone(console);
+console.warn = message => {
+  if (message.indexOf('Setting a timer') <= -1) {
+    _console.warn(message);
+  }
+};
 
 
 const mealImg = require('../../assets/mealEx.jpg');
