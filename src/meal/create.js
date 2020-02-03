@@ -173,7 +173,7 @@ export default class Create extends Component {
                 />
                 <Input
                   keyboardType='numeric'
-                  label='Duration :'
+                  label='Duration (min):'
                   style={styles.input}
                   value={this.state.duration.toString()}
                   onChangeText={(e) => this.onChangeInput(e, "duration")}

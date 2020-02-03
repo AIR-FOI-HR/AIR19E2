@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ImageBackground, TouchableWithoutFeedback, Image } from 'react-native';
-import { Layout, Button, Text, Icon } from 'react-native-ui-kitten';
+import { View, ImageBackground, TouchableWithoutFeedback, Image } from 'react-native';
+import { Button, Text, Icon } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
 import { joinMeal } from "../common/common";
 
@@ -62,111 +62,64 @@ export default class MealEvent extends Component {
                     </ImageBackground>
                 </TouchableWithoutFeedback>
                 { this.state.display ?
-                    <View style={styles.view}>
-                        <View style={{flexDirection: 'row',flexWrap: 'wrap', marginTop: '3%'}}>
-                            <View style={{flex:1}}>
-                                <Image
-                                    style={{width: 100, height: 100}}
-                                    source={{uri: 'http://api.qrserver.com/v1/create-qr-code/?data=' + this.state.meal.id + '&size=150x150'}} />
-                            </View>
-                            <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                                <Text category="s1">{this.state.meal.peopleNbr}/{this.state.meal.peopleMax}</Text>
-                                <Icon name='person' width={25} height={25} fill='gray' />
-                            </View>
+                <View>
+                    <View style={{flexDirection: 'row',flexWrap: 'wrap', marginTop: '3%'}}>
+                        <View style={{flex:1}}>
+                            <Image
+                                style={{width: 100, height: 100}}
+                                source={{uri: 'http://api.qrserver.com/v1/create-qr-code/?data=' + this.state.meal.id + '&size=150x150'}} />
                         </View>
-                        <View style={{marginTop: '2%'}}>
-                            <Text  category="s1" appearance='hint'>Description : </Text>
-                            <Text style={{marginLeft: '10%'}}>{ this.state.meal.description}</Text>
+                        <View style={{flex: 1, flexDirection: 'row-reverse'}}>
+                            <Text category="s1">{this.state.meal.peopleNbr}/{this.state.meal.peopleMax}</Text>
+                            <Icon name='person' width={25} height={25} fill='gray' />
                         </View>
-                        <View style={{marginTop: '2%'}}>
-                            <Text  category="s1" appearance='hint'>Price between : </Text>
-                            <Text style={{marginLeft: '10%'}}>{this.state.meal.priceMin.toString() + ' - ' + this.state.meal.priceMax.toString() + '€'}</Text>
-                        </View>
-                        <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
-                            <Text category="s1" appearance='hint'>Duration : </Text>
-                            <Text>{this.state.meal.duration.toString() + 'min'}</Text>
-                        </View>
-                        <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
-                            <Text category="s1" appearance='hint'>Address : </Text>
-                            <Text>{this.state.meal.address}</Text>
-                        </View>
-                        <Text>Ingredient :</Text>
-                        <View style={{marginTop: '2%', flexDirection: 'row',flexWrap: 'wrap'}}>
-                            <Layout style={styles.container2}>
+                    </View>
+                    <View style={{}}>
+                        <Text category="s1" appearance="hint" style={{fontWeight: 'bold'}}>Description :</Text>
+                        <Text style={{marginLeft: '5%'}}>{this.state.meal.description} </Text>
+                    </View>
+                    <View style={{marginTop: "1%"}}>
+                        <Text  category="s1" appearance="hint" style={{fontWeight: 'bold'}}>Price between : </Text>
+                        <Text style={{marginLeft: '5%'}}>{this.state.meal.priceMin.toString() + ' - ' + this.state.meal.priceMax.toString() + '€'}</Text>
+                    </View>
+                    <View style={{marginTop: '1%'}}>
+                        <Text category="s1" appearance="hint" style={{fontWeight: 'bold'}}>Duration : </Text>
+                        <Text style={{marginLeft: '5%'}}>{this.state.meal.duration.toString() + 'min'}</Text>
+                    </View>
+                    <View style={{marginTop: '1%'}}>
+                        <Text category="s1" appearance="hint" style={{fontWeight: 'bold'}}>Ingredients : </Text>
+                        <View style={{ marginLeft: "5%", flexDirection: 'row',flexWrap: 'wrap'}}>
                             {
-                                this.state.meal.ingredient.map((txt, index) => (
-                                    <Layout key={index} level='1' style={styles.layout}>
-                                            <Text>
-                                                {txt}
-                                            </Text>
-                                    </Layout>
+                                this.state.meal.ingredient.map((ingr, index) => (
+                                    <Text key={index}>{ingr} {this.state.meal.ingredient.length == index + 1 ? null : "-"} </Text>
                                 ))
                             }
-                            </Layout>
                         </View>
-                        <Text style={styles.input}>
-                            {"Start at : " + (this.state.meal.startAt.getMonth() + 1) + "/" + this.state.meal.startAt.getDate() +"/"+ this.state.meal.startAt.getFullYear() +" - "+ this.state.meal.startAt.getHours() +":"+ this.state.meal.startAt.getMinutes()}
-                        </Text>
-                        <View style={{marginTop: '10%'}}>
-                        {
-                            this.state.present ?
-                                <Button
-                                    onPress={() => this.quitMeal()}
-                                    style={styles.button}
-                                    status='danger'>
-                                    Quit Meal !
-                                </Button>
-                            :
-                                <Button
-                                    disabled={this.state.maxPeople}
-                                    onPress={() => this.handleButton(joinMeal(this.state.meal))}
-                                    style={styles.button}
-                                    status='info'>
-                                    Join meal !
-                                </Button>
-                        }
-                        </View>
-                    </View> : null
+                    </View>
+                    <View style={{marginTop: '1%'}}>
+                        <Text category="s1" appearance="hint" style={{fontWeight: 'bold'}}>Date : </Text>
+                        <Text style={{marginLeft: '5%'}}>{(this.state.meal.startAt.getMonth() + 1) + "/" + this.state.meal.startAt.getDate() +"/"+ this.state.meal.startAt.getFullYear() +" - "+ this.state.meal.startAt.getHours() +":"+ this.state.meal.startAt.getMinutes()}</Text>
+                    </View>
+                    <View style={{alignItems: 'center', marginTop: '10%'}}>
+                    {
+                        this.state.present ?
+                        <Button
+                            onPress={() => this.quitMeal()}
+                            status='danger'>
+                            Quit Meal !
+                        </Button>
+                        :
+                        <Button
+                            disabled={this.state.maxPeople}
+                            onPress={() => this.handleButton(joinMeal(this.state.meal))}
+                            status='success'>
+                            Join meal !
+                        </Button>
+                    }
+                    </View>
+                </View> : null
                 }
             </View>
         )
     }
 };
-
-const styles = StyleSheet.create({
-    container2: {
-        flex: 1,
-        flexDirection: 'row',
-    },
-    modalContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 256,
-        padding: 16,
-    },
-    backdrop: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    layout: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    container: {
-        height: '100%',
-        width: '100%',
-        alignItems: 'center',
-    },
-    view: {
-        flex: 1,
-        width: '95%',
-        marginTop: '1%'
-    },
-    ScrollView: {
-        height: 1500,
-    },
-    map: {
-        width: '100%',
-        height: '100%',
-    },
-});
