@@ -24,7 +24,7 @@ Linux
 
 Windows download it [here](https://expo.io/tools#snack)
 
-## Clone the repositorie
+## Clone the repository
 * ssh: `git clone git@github.com:AIR-FOI-HR/AIR19E2.git`
 * https: `git clone https://github.com/AIR-FOI-HR/AIR19E2.git`
 
