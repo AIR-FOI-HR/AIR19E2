@@ -38,7 +38,7 @@ export default class Home extends Component {
       await this.getMeals();
       let toto = [];
       this.state.meals.forEach((res) => {
-        if (res.title.toLowerCase().includes(this.state.searchValue.toLowerCase()))
+        if (res.name.toLowerCase().includes(this.state.searchValue.toLowerCase()))
           toto.push(res);
       })
       this.setState({
