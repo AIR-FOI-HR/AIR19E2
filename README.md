@@ -7,6 +7,9 @@ During this project we first wanted to discorver new technologies, that's why we
 
 As for the database, we use [Google's Firebase Cloud Firestore](https://firebase.google.com/) due to it comprehensive documentation and ease of implementation. The team is going to use [GitHub](https://github.com) as platform to manage the version control of the application (the repository we are using can be accessed through this link); and [Zenhub](https://app.zenhub.com) to manage our project planning (the board can be found through this link)
 
+### Project Planning
+Our team is following Scrum framework during the development process. As said before, we are monitoring our progress using tool [Zenhub](https://app.zenhub.com) where we can submit issues, set milestones, review closed issues. We planned to finish our project in three sprints, and using a fourth sprint to correct bugs, and finish tasks that we couldn't finished during the last sprints.
+
 ## Install nodeJS and npm (LTS recommended)
 
 [Download nodeJS and npm](https://nodejs.org/en/)
