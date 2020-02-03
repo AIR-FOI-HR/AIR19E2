@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text,  ScrollView, RefreshControl, SafeAreaView } from 'react-native';
-import { Layout, Button, Input, Icon } from 'react-native-ui-kitten';
+import { View, Image, StyleSheet, ScrollView, RefreshControl, SafeAreaView, TouchableNativeFeedback } from 'react-native';
+import { Layout, Button, Icon, Input, Text } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
 import { CardList } from 'react-native-card-list';
 import QRCode from 'react-native-qrcode';
 //import QRCode from 'react-native-qrcode-generator';
 //import QRCode from 'react-native-qrcode-svg';
+import MealEvent from '../meal/mealEvent'
+
 
 
 
@@ -26,65 +28,65 @@ const searchIcon = (style) => (
 //   res.forEach((doc) => {
 //     console.log(doc.data());
 //   })
-// })
+// // })
 
-const contentCard = (data, date, present, maxPeople) => (
-  <View>
-      <View style={{}}>
-        <Text category="h2"  style={{fontWeight: 'bold'}}>Description :</Text>
-        <Text style={{marginLeft: '5%'}}>{data.description.repeat(27)} </Text>
-      </View>
-        <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-          <Layout level="3">
-            <View>
-              <View style={{flex:1}}>
-                <QRCode
-                  size={70}
-                  value={data.id}/>
-              </View>
-            </View>
+// const contentCard = (data, date, present, maxPeople) => (
+//   <View>
+//       <View style={{}}>
+//         <Text category="h2"  style={{fontWeight: 'bold'}}>Description :</Text>
+//         <Text style={{marginLeft: '5%'}}>{data.description.repeat(27)} </Text>
+//       </View>
+//         <View style={{flex: 1, flexDirection: 'row-reverse'}}>
+//           <Layout level="3">
+//             <View>
+//               <View style={{flex:1}}>
+//                 <QRCode
+//                   size={70}
+//                   value={data.id}/>
+//               </View>
+//             </View>
 
-          </Layout>
-      </View>
-      <View style={{marginTop: "3%"}}>
-        <Text  category="h2" style={{fontWeight: 'bold'}}>Price between : </Text>
-        <Text style={{marginLeft: '5%'}}>{data.priceMin.toString() + ' - ' + data.priceMax.toString() + '€'}</Text>
-      </View>
-      <View style={{marginTop: '3%'}}>
-        <Text category="h2" style={{fontWeight: 'bold'}}>Duration : </Text>
-        <Text style={{marginLeft: '5%'}}>{data.duration.toString() + 'min'}</Text>
-      </View>
-      <View style={{marginTop: '3%'}}>
-        <Text category="h2" style={{fontWeight: 'bold'}}>Ingredients : </Text>
-        <View style={{ marginLeft: "5%", flexDirection: 'row',flexWrap: 'wrap'}}>
-          {data.ingredient.map((ingr, index) => (
-            <Text key={index}>{ingr} - </Text>
-          ))}
-        </View>
-      </View>
-      <View style={{marginTop: '3%'}}>
-        <Text category="h2" style={{fontWeight: 'bold'}}>Date : </Text>
-        <Text style={{marginLeft: '5%'}}>{(date.getMonth() + 1) + "/" + date.getDate() +"/"+ date.getFullYear() +" - "+ date.getHours() +":"+ date.getMinutes()}</Text>
-      </View>
-      <View style={{alignItems: 'center', marginTop: '10%'}}>
-        {
-          present ?
-            <Button
-                onPress={() => this.quitMeal()}
-                status='danger'>
-                Quit Meal !
-            </Button>
-          :
-            <Button
-                disabled={maxPeople}
-                onPress={() => this.joinMeal()}
-                status='success'>
-                Join meal !
-            </Button>
-        }
-      </View>
-  </View>
-)
+//           </Layout>
+//       </View>
+//       <View style={{marginTop: "3%"}}>
+//         <Text  category="h2" style={{fontWeight: 'bold'}}>Price between : </Text>
+//         <Text style={{marginLeft: '5%'}}>{data.priceMin.toString() + ' - ' + data.priceMax.toString() + '€'}</Text>
+//       </View>
+//       <View style={{marginTop: '3%'}}>
+//         <Text category="h2" style={{fontWeight: 'bold'}}>Duration : </Text>
+//         <Text style={{marginLeft: '5%'}}>{data.duration.toString() + 'min'}</Text>
+//       </View>
+//       <View style={{marginTop: '3%'}}>
+//         <Text category="h2" style={{fontWeight: 'bold'}}>Ingredients : </Text>
+//         <View style={{ marginLeft: "5%", flexDirection: 'row',flexWrap: 'wrap'}}>
+//           {data.ingredient.map((ingr, index) => (
+//             <Text key={index}>{ingr} - </Text>
+//           ))}
+//         </View>
+//       </View>
+//       <View style={{marginTop: '3%'}}>
+//         <Text category="h2" style={{fontWeight: 'bold'}}>Date : </Text>
+//         <Text style={{marginLeft: '5%'}}>{(date.getMonth() + 1) + "/" + date.getDate() +"/"+ date.getFullYear() +" - "+ date.getHours() +":"+ date.getMinutes()}</Text>
+//       </View>
+//       <View style={{alignItems: 'center', marginTop: '10%'}}>
+//         {
+//           present ?
+//             <Button
+//                 onPress={() => this.quitMeal()}
+//                 status='danger'>
+//                 Quit Meal !
+//             </Button>
+//           :
+//             <Button
+//                 disabled={maxPeople}
+//                 onPress={() => this.joinMeal()}
+//                 status='success'>
+//                 Join meal !
+//             </Button>
+//         }
+//       </View>
+//   </View>
+//)
 
 export default class Home extends Component {
 
@@ -104,28 +106,6 @@ export default class Home extends Component {
 
   componentDidMount = () => {
     this.getMeals();
-  }
-
-  joinMeal = () => {
-    meal = this.state.meal;
-
-    meal.peopleNbr += 1;
-    meal.peoples.push(firebase.auth().currentUser.uid);
-
-    this.setState({present: true});
-
-    this.db.collection("meal").doc(meal.id).update(meal);
-  }
-
-  quitMeal = () => {
-    meal = this.state.meal;
-
-    meal.peopleNbr -= 1;
-    meal.peoples.splice(meal.peoples.indexOf(firebase.auth().currentUser.uid), 1);
-
-    this.setState({present: false});
-
-    this.db.collection("meal").doc(meal.id).update(meal);
   }
 
   searchMeal = async () => {
@@ -156,22 +136,15 @@ export default class Home extends Component {
       }
       let meals = [];
       snapshot.forEach((doc) => {
-        let date = doc.data().startAt.toDate();
-        let present = false;
-        let maxPeople = false;
+        let meal = doc.data();
 
+        meal.id = doc.id;
+        meal.startAt = meal.startAt.toDate();
 
         if (doc.data().peoples.indexOf(firebase.auth().currentUser.uid) != -1)
-            present = true;
+            meal.present = true;
         else if (doc.data().peopleNbr === doc.data().peopleMax)
-            maxPeople = true;
-
-        let meal = {
-          id: doc.id,
-          title: doc.data().name,
-          picture: doc.data().mealImg ? doc.data().mealImg : mealImg,
-          content: contentCard(doc.data(), date, present, maxPeople),
-        }
+            meal.maxPeople = true;
 
         meals.push(meal);
       });
@@ -189,6 +162,7 @@ export default class Home extends Component {
   onSearchChange = (value) => {
     this.setState({ searchValue: value });
   }
+
   onRefresh = async () => {
     this.setState({refreshing : true});
     await this.getMeals()
@@ -216,11 +190,20 @@ export default class Home extends Component {
               <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
             }
           >
-              <Layout style={styles.container}>
-                <View >
-                  <CardList cards={this.state.meals} style={{height: '50%'}}/>
-                </View>
-              </Layout>
+            <Layout style={styles.container}>
+              <View>
+                { this.state.meals.length ?
+                  this.state.meals.map((meal) => (
+                    <View key={meal.id}>
+                      <MealEvent meal={meal}/>
+                    </View>
+                  )) :
+                    <View>
+                      <Text>No meals registered yet ! Create one !</Text>
+                    </View>
+                }
+              </View>
+            </Layout>
           </ScrollView>
       </SafeAreaView>
     )
