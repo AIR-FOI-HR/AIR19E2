@@ -4,23 +4,6 @@ import { Layout, Input, Icon, Button, Text } from 'react-native-ui-kitten';
 import validator from "validator";
 import firebase from "firebase/app";
 
-
-
-const styles = StyleSheet.create({
-  input: {
-    width: '90%',
-    marginTop: '2%'
-  },
-  button: {
-    width: '90%',
-    marginTop: '10%',
-  },
-  ScrollView: {
-    height: 400,
-    width: 260,
-  }
-});
-
 const logo = require("../../assets/blabla_eat.png");
 
 export default class SignUp extends Component {
@@ -96,7 +79,6 @@ export default class SignUp extends Component {
     }
   }
 
-
   validate = () => {
     let errors = {};
     if (!validator.isEmail(this.state.email)) errors.emailFormat = true;
@@ -107,7 +89,6 @@ export default class SignUp extends Component {
     if (!this.state.passwordRepeat) errors.passwordRepeat = true;
     this.setState({ errors });
   }
-
 
   renderIcon = (style) => {
     const iconName = this.state.visiblePassword ? 'eye-off' : 'eye';
@@ -194,3 +175,18 @@ export default class SignUp extends Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  input: {
+    width: '90%',
+    marginTop: '2%'
+  },
+  button: {
+    width: '90%',
+    marginTop: '10%',
+  },
+  ScrollView: {
+    height: 400,
+    width: 260,
+  }
+});

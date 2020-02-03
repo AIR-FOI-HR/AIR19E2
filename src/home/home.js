@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, ScrollView, RefreshControl, SafeAreaView, YellowBox } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, SafeAreaView, YellowBox } from 'react-native';
 import { Layout, Button, Icon, Input, Text } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
 import MealEvent from '../meal/mealEvent';
@@ -62,10 +62,6 @@ export default class Home extends Component {
 
     await allMeals.where('startAt', '>', new Date()).get()
     .then(snapshot => {
-      if (snapshot.empty) {
-        console.log('No matching documents.');
-        return;
-      }
       let meals = [];
       let i = 4;
       snapshot.forEach((doc) => {

@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableWithoutFeedback, Image } from 'react-native';
-import { Layout, Button, Text, Icon, Modal } from 'react-native-ui-kitten';
+import { Layout, Button, Text, Icon } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
 import { joinMeal } from "../common/common";
-import axios from 'axios';
-
-const mealImg = require('../../assets/mealEx.jpg');
 
 export default class MealEvent extends Component {
     constructor(props) {
