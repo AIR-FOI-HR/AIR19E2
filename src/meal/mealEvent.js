@@ -23,9 +23,9 @@ export default class MealEvent extends Component {
     }
 
     componentDidMount = () => {
-        if (this.state.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1)
+        if (this.props.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1)
             this.setState({present: true});
-        else if ( this.state.meal.peopleNbr >= this.state.meal.peopleMax)
+        else if ( this.props.meal.peopleNbr >= this.props.meal.peopleMax)
             this.setState({maxPeople: true});
     }
 
