@@ -2,6 +2,11 @@
 
 BlaBlaEat is an app which will permit you to share lunch, dinner or even breakfast with your friends or just with random people. It's good oportunity to meet people and get new friends ;)
 
+### Technologies
+During this project we first wanted to discorver new technologies, that's why we decides to use the framwork [React Native](https://facebook.github.io/react-native/) developed by [Facebook](https://facebook.com). This technologies enables web developers to create robust mobile applications using their existing JavaScript knowledge. It offers faster mobile development, and more efficient code sharing across iOS, Android, and the Web, without sacrificing the end user’s experience or application quality.
+
+As for the database, we use [Google's Firebase Cloud Firestore](https://firebase.google.com/) due to it comprehensive documentation and ease of implementation. The team is going to use [GitHub](https://github.com) as platform to manage the version control of the application (the repository we are using can be accessed through this link); and [Zenhub](https://app.zenhub.com) to manage our project planning (the board can be found through this link)
+
 ## Install nodeJS and npm (LTS recommended)
 
 [Download nodeJS and npm](https://nodejs.org/en/)
@@ -42,7 +47,6 @@ In the repositorie folder run:
 
 ## Run the app
 Start the project using `npm start` command and follow the instructions in the terminal
-
 
 ## Contribution
 Antoine Briaux - Joffrey Devautour - Pierre Leriche - Yaniss Pheron
