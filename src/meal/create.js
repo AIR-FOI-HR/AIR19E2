@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, StyleSheet, Alert, Image } from 'react-native';
+import { View, ScrollView, StyleSheet, Image } from 'react-native';
 import { Layout, Button, Input, Text } from 'react-native-ui-kitten';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import firebase from "firebase/app";

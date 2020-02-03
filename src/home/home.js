@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Text,  ScrollView, RefreshControl, SafeAreaView } from 'react-native';
 import { Layout, Button, Input, Icon } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
-import { mapping, light as lightTheme } from '@eva-design/eva';
 import { CardList } from 'react-native-card-list';
 
 const mealImg = require('../../assets/mealEx.jpg');

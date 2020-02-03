@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Image, KeyboardAvoidingView } from 'react-native';
-import { mapping } from '@eva-design/eva';
-import { light as lightTheme } from '@eva-design/eva';
-import { SocialIcon } from 'react-native-elements'
-import { ApplicationProvider, Layout, Input, Icon, Button, Text } from 'react-native-ui-kitten';
+import { View, StyleSheet, Image, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Layout, Input, Icon, Button, Text } from 'react-native-ui-kitten';
 import validator from "validator";
 import firebase from "firebase/app";
 
@@ -11,16 +8,17 @@ import firebase from "firebase/app";
 
 const styles = StyleSheet.create({
   input: {
-    marginHorizontal: 4,
-    width: '70%',
+    width: '90%',
     marginTop: '2%'
   },
   button: {
-    marginVertical: 4,
-    marginHorizontal: 4,
-    width: '70%',
-    marginTop: '5%',
+    width: '90%',
+    marginTop: '10%',
   },
+  ScrollView: {
+    height: 400,
+    width: 260,
+  }
 });
 
 const logo = require("../../assets/blabla_eat.png");
@@ -121,12 +119,12 @@ export default class SignUp extends Component {
   render() {
     return (
       <>
-        <Layout style={{ height: '100%' }}>
           <KeyboardAvoidingView
             style={{ flex: 3.7 }}
-            behavior="padding"
+            behavior="position"
             enabled
           >
+        <Layout style={{ height: '100%', width: '100%' }}>
             <View style={{ marginTop: "20%", alignItems: 'center' }}>
               <Image
                 style={{ width: 150, height: 150 }}
@@ -135,14 +133,16 @@ export default class SignUp extends Component {
               <Text category='h6' style={{ marginTop: "5%" }}>BlaBlaEat</Text>
               <Text appearance='hint' style={{ marginTop: "2%" }}>Join the community</Text>
             </View>
-            <Layout style={{ flex: 6, alignItems: 'center', marginTop: "3%" }}>
-              <View style={{ height: "100%", marginTop: "3%" }}>
+            <Layout style={{ flex: 1, marginTop: "3%",alignItems: 'center'}}>
+              <View >
+              <ScrollView contentContainerStyle={styles.ScrollView} showsVerticalScrollIndicator={false}>
+                <View >
                 <Input
                   style={styles.input}
                   value={this.state.fName}
                   onChangeText={this.onChangeFName}
                   status={this.state.errors.fName ? 'danger' : ''}
-                  //caption={this.state.errors.fName ? 'Invalid value' : ''}
+                  caption={this.state.errors.fName ? 'Invalid value' : ''}
                   placeholder='First name'
                 />
                 <Input
@@ -150,7 +150,7 @@ export default class SignUp extends Component {
                   value={this.state.lName}
                   onChangeText={this.onChangeLName}
                   status={this.state.errors.lName ? 'danger' : ''}
-                  //caption={this.state.errors.lName ? 'Invalid value' : ''}
+                  caption={this.state.errors.lName ? 'Invalid value' : ''}
                   placeholder='Last name'
                 />
                 <Input
@@ -180,16 +180,16 @@ export default class SignUp extends Component {
                   secureTextEntry={this.state.visiblePasswordRepeat}
                   onIconPress={this.onIconPress}
                   onChangeText={this.onChangePasswordRepeat}
-                  //status={this.state.errors.passwordRepeat ? 'danger' : ''}
+                  status={this.state.errors.passwordRepeat ? 'danger' : ''}
                   caption={this.state.errors.passwordRepeat ? 'Invalid value' : ''}
                 />
+                </View>
+                <Button style={styles.button} status='info' onPress={this.onSignUp}>Sign Up</Button>
+                </ScrollView>
               </View>
             </Layout>
-          </KeyboardAvoidingView>
-          <View style={{ alignItems: 'center' }}>
-            <Button style={styles.button} status='info' onPress={this.onSignUp}>Sign Up</Button>
-          </View>
         </Layout>
+        </KeyboardAvoidingView>
       </>
     )
   }

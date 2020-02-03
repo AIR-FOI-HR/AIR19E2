@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text as TextN } from 'react-native';
+import { View, StyleSheet, Text as TextN, Image, KeyboardAvoidingView } from 'react-native';
 import "firebase/auth";
 import firebase from "firebase/app";
-import { FirebaseAuthProvider } from '@react-firebase/auth';
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import { ApplicationProvider, Layout, Input, Icon, Text, Button } from 'react-native-ui-kitten';
 
@@ -72,23 +71,33 @@ export default class SignIn extends Component {
   render() {
     return (
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
-        <Layout style={{ height: '100%' }}>
-          <View style={{ flex: 2, alignItems: 'center', marginTop: "30%" }}>
-            <Input
-              style={styles.input}
-              value={this.state.email}
-              onChangeText={this.onChangeEmail}
-              placeholder='email'
-            />
-            <Input
-              style={styles.input}
-              value={this.state.password}
-              placeholder='password'
-              icon={this.renderIcon}
-              secureTextEntry={this.state.visiblePassword}
-              onIconPress={this.onIconPress}
-              onChangeText={this.onChangePassword}
-            />
+        <KeyboardAvoidingView behavior="position" enabled>
+        <Layout style={{ height: '100%'}}>
+        <View style={{ alignItems: 'center',  marginTop: "30%" }}>
+              <Image
+                style={{ width: 150, height: 150 }}
+                source={logo}
+              />
+              <Text style={{ marginTop: '2%' }} category='h3'> BlaBlaEat</Text>
+            </View>
+          <View style={{ flex: 2, alignItems: 'center', marginTop: "10%" }}>
+            <View>
+              <Input
+                style={styles.input}
+                value={this.state.email}
+                onChangeText={this.onChangeEmail}
+                placeholder='email'
+              />
+              <Input
+                style={styles.input}
+                value={this.state.password}
+                placeholder='password'
+                icon={this.renderIcon}
+                secureTextEntry={this.state.visiblePassword}
+                onIconPress={this.onIconPress}
+                onChangeText={this.onChangePassword}
+              />
+              </View>
             <Text appearance='hint' category='c1' style={{ marginTop: '5%' }}>
               FORGOT PASSWORD ?
                             </Text>
@@ -103,6 +112,7 @@ export default class SignIn extends Component {
             </Text>
           </View>
         </Layout>
+          </KeyboardAvoidingView>
       </ApplicationProvider>
     )
   }
