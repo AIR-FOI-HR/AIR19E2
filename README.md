@@ -8,7 +8,7 @@ BlaBlaEat is an app which will permit you to share lunch, dinner or even breakfa
 
 Linux
 ```bash
-  sudo apt get install 
+  sudo apt get install nodejs npm
 ```
 
 Windows download it [here](https://nodejs.org/en/download/)
@@ -16,6 +16,13 @@ Windows download it [here](https://nodejs.org/en/download/)
 ## Install expo
 
 [Download Expo](https://expo.io/learn)
+
+Linux 
+```bash
+  npm install expo-cli --global
+```
+
+Windows download it [here](https://expo.io/tools#snack)
 
 ## Clone the repositorie
 * ssh: `git clone git@github.com:AIR-FOI-HR/AIR19E2.git`
@@ -40,6 +47,5 @@ Antoine Briaux - Joffrey Devautour - Pierre Leriche - Yaniss Pheron
 French students from Epitech at FOI (Faculty of Organization and Informatics) in 4th year
 
 ## License
-[MIT]
-(https://choosealicense.com/licenses/mit/)
+[MIT](https://choosealicense.com/licenses/mit/)
 
