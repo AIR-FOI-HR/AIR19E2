@@ -18,20 +18,22 @@ export default function QrCode(props) {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    firebase.firestore().collection('meal').where('id', '==', "rlKUcQOF7g7eo87hj6jM").get()
+    firebase.firestore().collection('meal').doc(data).get()
     .then(function(doc) {
       if (doc.exists) {
           let meal = doc.data();
 
-          if (meal.peopleMax > meal.peopleNbr)
+          if (meal.peopleMax > meal.peopleNbr) {
             joinMeal(meal);
+            alert('You join ' + meal.name + ' meal !');
+          } else
+            alert('No more place for ' + meal.name + ' meal :(');
       } else {
           console.log("No such document!");
       }
-  }.bind(this)).catch(function(error) {
-      console.log("Error getting document:", error);
-  });
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    }.bind(this)).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
   };
 
   if (hasPermission === null) {

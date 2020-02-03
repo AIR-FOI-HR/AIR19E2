@@ -11,9 +11,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import QrCode from './qrCode';
 import * as Permissions from 'expo-permissions';
 
-
-
-
 const signOutIcon = (style) => (
   <Icon name="log-out-outline" width={32} height={32}></Icon>
 )
@@ -200,7 +197,7 @@ export default class Profil extends Component {
       this.state.password
     );
     user.reauthenticateWithCredential(credential).then(function() {
-     this.update();
+      this.update();
     }.bind(this, user)).catch(function(error) {
       console.log("reauthentication failed : " + error)
       Toast.show('Password incorrect', {
@@ -294,7 +291,7 @@ export default class Profil extends Component {
   render() {
     return (
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
-          {this.state.camera ? 
+          {this.state.camera ?
             <QrCode onCloseCamera={() => this.onCloseCamera()}/>
           :
         <Layout style={styles.container}>
@@ -313,7 +310,7 @@ export default class Profil extends Component {
             visible={this.state.visibleHistory}>
               {this.historyModal()}
           </Modal>
-          {this.state.spinner ? 
+          {this.state.spinner ?
             <Spinner
             visible={this.state.spinner}
             textContent={'Loading...'}
@@ -385,7 +382,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   modalContainerHistory: {
-    
     width: 256,
     padding: 16,
   },
