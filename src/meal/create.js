@@ -72,7 +72,7 @@ export default class Create extends Component {
         this.setState({ startAt: e });
         break;
       case "newIngredient":
-        this.setState({ newIngredient: e })
+        this.setState({ newIngredient: e });
       default:
         break;
     }
@@ -110,7 +110,7 @@ export default class Create extends Component {
     console.log(typeof iState.startAt)
 
     this.db.collection('meal').add(iState)
-      .then(ref => { this.props.navigation.navigate('MealEvent', {id: ref.id});});
+      .then(ref => { this.props.navigation.navigate('Home');});
   };
 
   showDateTimePicker = () => {
