@@ -106,6 +106,20 @@ export default class Create extends Component {
     iState.peoples.push(uid)
 
     iState.userId = uid;
+    this.setState({
+      name: "",
+      peopleMax: 0,
+      description: "",
+      priceMax: 0,
+      priceMin: 0,
+      duration: 0,
+      address: "",
+      peopleNbr: 1,
+      startAt: new Date(),
+      peoples: [],
+      newIngredient: "",
+      ingredient: [],
+    })
 
     this.db.collection('meal').add(iState)
       .then(ref => { this.props.navigation.navigate('Home');});
