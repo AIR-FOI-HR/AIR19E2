@@ -11,15 +11,15 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import QrCode from './qrCode';
 import * as Permissions from 'expo-permissions';
 
-const signOutIcon = (style) => (
+const signOutIcon = () => (
   <Icon name="log-out-outline" width={32} height={32}></Icon>
 )
 
-const camera = (style) => (
+const camera = () => (
   <Icon name="camera-outline" width={32} height={32}></Icon>
 )
 
-const history = (style) => (
+const history = () => (
   <Icon name="bookmark-outline" width={32} height={32}></Icon>
 )
 
@@ -345,11 +345,6 @@ export default class Profil extends Component {
             <View style={{alignItems: 'center', marginTop: '10%'}}>
               <Button status='success' onPress={this.check}>Update</Button>
             </View>
-
-            {/* <Text>Email: {this.state.email}</Text>
-            <Button onPress={this.toggleModal}>Change email</Button>
-            <Text>Display name:</Text>
-            <Input value={this.state.displayName} onChangeText={(e) => this.onChangeInput(e, "name")} onSubmitEditing={this.changeName} /> */}
           </View>
         </Layout>
         }

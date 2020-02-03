@@ -9,13 +9,6 @@ export default function QrCode(props) {
   const [hasPermission] = useState("granted");
   const [scanned, setScanned] = useState(false);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const { status } = await BarCodeScanner.requestPermissionsAsync();
-  //     setHasPermission(status === 'granted');
-  //   })();
-  // }, []);
-
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     firebase.firestore().collection('meal').doc(data).get()

@@ -5,26 +5,12 @@ import firebase from "firebase/app";
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import { ApplicationProvider, Layout, Input, Icon, Text, Button } from 'react-native-ui-kitten';
 
-
-const styles = StyleSheet.create({
-    input: {
-        marginHorizontal: 4,
-        width: '70%'
-    },
-    button: {
-        marginVertical: 4,
-        width: '70%',
-        marginTop: '5%'
-    },
-});
-
 const logo = require("../../assets/blabla_eat.png");
 export default class SignIn extends Component {
 
   componentWillMount() {
     this.unsuscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        // console.log("Hello", firebase.auth().currentUser);
         this.props.navigation.navigate('App');
       } else {
         console.log("Nobody");
@@ -117,3 +103,15 @@ export default class SignIn extends Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  input: {
+      marginHorizontal: 4,
+      width: '70%'
+  },
+  button: {
+      marginVertical: 4,
+      width: '70%',
+      marginTop: '5%'
+  },
+});

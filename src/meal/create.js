@@ -217,7 +217,6 @@ export default class Create extends Component {
                 <View style={{alignItems: 'center', marginTop: '2%'}}>
                   <Button
                     onPress={() => this.addIngredient()}
-                    //style={styles.button}
                     style={{width: '70%'}}
                     >
                       Add ingredient
@@ -236,7 +235,6 @@ export default class Create extends Component {
                 <View style={{alignItems: 'center', marginTop: '2%'}}>
                   <Button
                     onPress={this.showDateTimePicker}
-                    //style={styles.button}
                   >
                     Change Date
                   </Button>
@@ -253,17 +251,6 @@ export default class Create extends Component {
             </View>
           </KeyboardAvoidingView>
           </View>
-          {/* <View style={{position: 'absolute', flex: 1,marginTop:'100%'}}> */}
-          {/* <View style={{flex: 0.6,
-  justifyContent: 'flex-end',
-  marginBottom: 5}}>
-                <Layout style={{ flexDirection: 'row',
-    flexWrap: 'wrap',}}>
-                    <Button style={styles.button2} status='danger' onPress={() => this.onCancel()}>Cancel</Button>
-                    <Button style={styles.button2} status='success' onPress={() => this.createMeal()}>Submit</Button>
-
-                </Layout>
-                </View> */}
         </Layout>
     )
   }
