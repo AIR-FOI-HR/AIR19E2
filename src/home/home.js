@@ -143,10 +143,12 @@ export default class Home extends Component {
         return;
       }
       let meals = [];
+      let i = 4;
       snapshot.forEach((doc) => {
         let meal = doc.data();
 
         meal.id = doc.id;
+        meal.img = 'https://source.unsplash.com/collection/1353633/'+ i.toString() + '00x900';
         meal.startAt = meal.startAt.toDate();
 
         if (doc.data().peoples.indexOf(firebase.auth().currentUser.uid) != -1)
@@ -155,6 +157,7 @@ export default class Home extends Component {
             meal.maxPeople = true;
 
         meals.push(meal);
+        i++;
       });
       this.setState({meals: meals});
     })

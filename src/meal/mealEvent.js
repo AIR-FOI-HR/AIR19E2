@@ -82,7 +82,8 @@ export default class MealEvent extends Component {
                     </Modal>
                 </Layout>
                 <TouchableWithoutFeedback onPress={() => this.displayHandle()}>
-                    <ImageBackground imageStyle={{ borderRadius: 25 }} style={{height: 200, width: "100%"}} source={mealImg}>
+                    {/* <ImageBackground imageStyle={{ borderRadius: 25 }} style={{height: 200, width: "100%"}} source={{uri: "https://source.unsplash.com/collection/1353633/200x400"}}> */}
+                    <ImageBackground imageStyle={{ borderRadius: 25 }} style={{height: 200, width: "100%"}} source={{uri: this.props.meal.img}}>
                         <Text style={{color: "white", textAlign: "center"}} category="h1">{this.props.meal.name}</Text>
                     </ImageBackground>
                 </TouchableWithoutFeedback>
