@@ -121,35 +121,15 @@ export default class Home extends Component {
       await this.getMeals();
       this.setState({error: true});
     }else {
-      //console.log(this.state.meals);
       await this.getMeals();
       let toto = [];
-      //this.state.meals.find(meal => meal.title.include(this.state.searchValue));
       this.state.meals.forEach((res) => {
         if (res.title.toLowerCase().includes(this.state.searchValue.toLowerCase()))
           toto.push(res);
       })
-      toto.forEach((res) =>{
-        console.log(res.title);
-      })
       this.setState({
         meals: toto,
       })
-      console.log(toto);
-      // this.setState({error: false});
-      // this.db.collection("meal")
-      // .where("name", ">", [this.state.searchValue])
-      // .get()
-      // .then((res) => {
-      //   console.log(res);
-      //   if (res.empty) {
-      //     console.log('No matching documents.');
-      //     return;
-      //   }
-      //   res.forEach((doc) => {
-      //     console.log(doc.data());
-      //   })
-      // })
     }
   }
 

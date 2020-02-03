@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Button, Icon, Text, ApplicationProvider, Input, Modal } from 'react-native-ui-kitten';
+import { Layout, Button, Icon, Text, ApplicationProvider, Input, Modal, Menu } from 'react-native-ui-kitten';
 import { View, StyleSheet } from 'react-native';
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import "firebase/auth";
@@ -14,6 +14,25 @@ const signOutIcon = (style) => (
   <Icon name="log-out-outline" width={32} height={32}></Icon>
 )
 
+const camera = (style) => (
+  <Icon name="camera-outline" width={32} height={32}></Icon>
+)
+
+const history = (style) => (
+  <Icon name="bookmark-outline" width={32} height={32}></Icon>
+)
+
+const menu = [
+  {
+    title: 'Activity history',
+    icon: history,
+  },
+  {
+    title: 'Join meal',
+    icon: camera,
+  },
+];
+
 export default class Profil extends Component {
 
   state = {
@@ -25,9 +44,12 @@ export default class Profil extends Component {
     secureTextEntry: true,
     setSecureTextEntry: true,
     password: "",
-    visible: false,
     visiblePassword: true,
     spinner: false,
+    selectedIndex: null,
+    visible: false,
+    visibleHistory: false,
+    history: [],
   }
 
 
@@ -63,6 +85,7 @@ export default class Profil extends Component {
       visible: false,
       spinner: false,
     });
+    this.getMealsJoined();
   }
 
   onChangeInput = (e, index) => {
@@ -137,11 +160,14 @@ export default class Profil extends Component {
       shadow: true
     });
     this.componentDidMount();
-    console.log("finis");
   }
 
   toggleModal = () => {
     this.setState({visible: !this.state.visible});
+  };
+
+  toggleModalHistory = () => {
+    this.setState({visibleHistory: !this.state.visibleHistory});
   };
 
   onIconPressSecure = () => {
@@ -176,6 +202,32 @@ export default class Profil extends Component {
     });
   }
 
+  getMealsJoined = () => {
+    console.log(firebase.auth().currentUser.uid);
+    firebase.firestore().collection('meal')
+      .where('peoples', 'array-contains', firebase.auth().currentUser.uid)
+      .get()
+      .then((res) => {
+        if (res.empty){
+          console.log("No event found");
+          return;
+        }
+        let history = [];
+        let date;
+        let finalDate;
+        res.forEach((doc) => {
+          console.log(doc.data().name);
+          date = doc.data().startAt.toDate();
+          finalDate = (date.getMonth() + 1) + "/" + date.getDate() +"/"+ date.getFullYear();
+          history.push({name: doc.data().name, date: finalDate})
+        })
+        this.setState({
+          history: history,
+        })
+        console.log(history);
+      })
+  }
+
   renderModalElement = () => (
     <Layout
       style={styles.modalContainer}
@@ -194,15 +246,54 @@ export default class Profil extends Component {
     </Layout>
   );
 
+  historyModal = () => (
+    <Layout
+      level='3'
+      style={styles.modalContainerHistory}>
+      <View style={{alignItems: "center"}}>
+        <Text category='h5'>Activity</Text>
+      </View>
+      <View style={{flex: 1, marginTop: '8%'}}>
+        {this.state.history.map((value, index) => (
+          <View key={index} style={{flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <Text>{value.name}</Text>
+            </View>
+            <View style={{flex: 1}}>
+              <Text style={{textAlign: 'right'}}>{value.date}</Text>
+            </View>
+          </View>
+    ))}
+
+    </View>
+    </Layout>
+  )
+
+  setSelectedIndex = (index) => {
+    if (index === 0) {
+      this.setState({visibleHistory: !this.state.visibleHistory});
+    }
+  }
+
   render() {
     return (
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <Layout style={styles.container}>
+
+
           <Modal allowBackdrop={true}
             backdropStyle={styles.backdrop}
             onBackdropPress={this.toggleModal}
             visible={this.state.visible}>
               {this.renderModalElement()}
+          </Modal>
+
+
+          <Modal allowBackdrop={true}
+            backdropStyle={styles.backdrop}
+            onBackdropPress={this.toggleModalHistory}
+            visible={this.state.visibleHistory}>
+              {this.historyModal()}
           </Modal>
           {this.state.spinner ? 
             <Spinner
@@ -221,6 +312,14 @@ export default class Profil extends Component {
               <Button appearance="ghost" icon={signOutIcon} onPress={this.signOut}></Button>
             </View>
             <View style={{marginLeft: "5%", width: "80%"}}>
+              <Menu
+                data={menu}
+                selectedIndex={this.state.selectedIndex}
+                onSelect={this.setSelectedIndex}
+              />
+            </View>
+
+            <View style={{marginTop: '5%',marginLeft: "5%", width: "80%"}}>
               <Text>Name</Text>
               <Input style={{ marginTop: '1%'}} onChangeText={this.onChangeName} value={this.state.displayName} />
             </View>
@@ -263,6 +362,11 @@ const styles = StyleSheet.create({
   modalContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    width: 256,
+    padding: 16,
+  },
+  modalContainerHistory: {
+    
     width: 256,
     padding: 16,
   },
