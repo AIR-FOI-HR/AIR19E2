@@ -3,6 +3,11 @@ import { View, StyleSheet, Text,  ScrollView, RefreshControl, SafeAreaView } fro
 import { Layout, Button, Input, Icon } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
 import { CardList } from 'react-native-card-list';
+import QRCode from 'react-native-qrcode';
+//import QRCode from 'react-native-qrcode-generator';
+//import QRCode from 'react-native-qrcode-svg';
+
+
 
 const mealImg = require('../../assets/mealEx.jpg');
 
@@ -28,10 +33,18 @@ const contentCard = (data, date, present, maxPeople) => (
       <View style={{}}>
         <Text category="h2"  style={{fontWeight: 'bold'}}>Description :</Text>
         <Text style={{marginLeft: '5%'}}>{data.description.repeat(27)} </Text>
-        {/* <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-            <Text category="s1">1</Text>
-            <Icon name='person' width={25} height={25} fill='gray' />
-        </View> */}
+      </View>
+        <View style={{flex: 1, flexDirection: 'row-reverse'}}>
+          <Layout level="3">
+            <View>
+              <View style={{flex:1}}>
+                <QRCode
+                  size={70}
+                  value={data.id}/>
+              </View>
+            </View>
+
+          </Layout>
       </View>
       <View style={{marginTop: "3%"}}>
         <Text  category="h2" style={{fontWeight: 'bold'}}>Price between : </Text>
