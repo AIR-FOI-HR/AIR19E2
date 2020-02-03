@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import { View, StyleSheet, ImageBackground, TouchableWithoutFeedback, Image } from 'react-native';
 import { Layout, Button, Text, Icon, Modal } from 'react-native-ui-kitten';
 import firebase from "firebase/app";
-import QRCode from 'react-native-qrcode';
-//import QRCode from 'react-native-qrcode-generator'
-//import QRCode from 'react-native-qrcode-svg'
 import { joinMeal } from "../common/common";
 import axios from 'axios';
 
@@ -18,21 +15,6 @@ export default class MealEvent extends Component {
 
     state = {
         display: false,
-        present: false,
-        maxPeople: false,
-        visibleQR: false,
-    }
-
-    joinMeal() {
-        meal = this.state.meal;
-
-        meal.peopleNbr += 1;
-        meal.peoples.push(firebase.auth().currentUser.uid);
-
-        this.setState({present: true});
-
-        this.db.collection("meal").doc(meal.id).update(meal);
-
     }
 
     quitMeal() {
@@ -48,39 +30,9 @@ export default class MealEvent extends Component {
         this.setState({display: !this.state.display});
     }
 
-    qrCodeModal = () => (
-        <Layout
-        level='3'
-        style={styles.modalContainerHistory}>
-        <View style={{alignItems: "center"}}>
-          <Text category='h5'>Activity</Text>
-        </View>
-        <View style={{flex: 1, marginTop: '8%'}}>
-      </View>
-      </Layout>
-      )
-    toggleModalQR = () => {
-      this.setState({visibleQR: !this.state.visibleQR});
-    };
-
-    qrCode = () => {
-        console.log(this.state.visibleQR);
-        this.setState({visibleQR: true});
-        console.log(this.state.visibleQR);
-    }
-    
-
     render() {
         return (
             <View style={{width: "95%", margin: "2%"}}>
-                <Layout>
-                    <Modal allowBackdrop={true}
-                        backdropStyle={styles.backdrop}
-                        onBackdropPress={this.toggleModalQR}
-                        visible={this.state.visibleQR}>
-                        {this.qrCodeModal()}
-                    </Modal>
-                </Layout>
                 <TouchableWithoutFeedback onPress={() => this.displayHandle()}>
                     <ImageBackground imageStyle={{ borderRadius: 25 }} style={{height: 200, width: "100%"}} source={mealImg}>
                         <Text style={{color: "white", textAlign: "center"}} category="h1">{this.props.meal.name}</Text>
@@ -133,7 +85,6 @@ export default class MealEvent extends Component {
                             {"Start at : " + (this.props.meal.startAt.getMonth() + 1) + "/" + this.props.meal.startAt.getDate() +"/"+ this.props.meal.startAt.getFullYear() +" - "+ this.props.meal.startAt.getHours() +":"+ this.props.meal.startAt.getMinutes()}
                         </Text>
                         <View style={{marginTop: '10%'}}>
-
                         {
                             this.props.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1 ?
                                 <Button
@@ -159,20 +110,19 @@ export default class MealEvent extends Component {
     }
 };
 
-
 const styles = StyleSheet.create({
     container2: {
         flex: 1,
         flexDirection: 'row',
     },
-    modalContainerHistory: {
+    modalContainer: {
         justifyContent: 'center',
         alignItems: 'center',
         width: 256,
         padding: 16,
     },
     backdrop: {
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     layout: {
         flex: 1,

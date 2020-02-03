@@ -107,8 +107,6 @@ export default class Create extends Component {
 
     iState.userId = uid;
 
-    console.log(typeof iState.startAt)
-
     this.db.collection('meal').add(iState)
       .then(ref => { this.props.navigation.navigate('Home');});
   };
