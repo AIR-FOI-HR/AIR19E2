@@ -101,18 +101,14 @@ export default class Create extends Component {
     let uid = firebase.auth().currentUser.uid;
     let iState = this.state;
 
-    console.log("Test")
-    console.log(iState)
     delete iState.visible;
     delete iState.newIngredient;
-    console.log("Test")
     iState.peoples.push(uid)
-    console.log("Test")
 
-    console.log(iState)
     iState.userId = uid;
 
-    console.log("Test")
+    console.log(typeof iState.startAt)
+
     this.db.collection('meal').add(iState)
       .then(ref => { this.props.navigation.navigate('MealEvent', {id: ref.id});});
   };
