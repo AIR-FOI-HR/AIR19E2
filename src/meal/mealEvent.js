@@ -14,16 +14,42 @@ export default class MealEvent extends Component {
     }
 
     state = {
+        meal: this.props.meal,
         display: false,
+        present: false,
+        maxPeople: false,
+    }
+
+    componentDidMount = () => {
+        this.handleButton(this.state.meal);
+    }
+
+    refresh = () => {
+        this.setState({meal: this.props.meal});
+        this.handleButton(this.state.meal)
+    }
+
+    handleButton = (meal) => {
+        let present = false;
+        let maxPeople = false;
+
+        this.setState(meal);
+        if (this.state.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1)
+            present = true;
+        else if ( this.state.meal.peopleNbr >= this.state.meal.peopleMax)
+            maxPeople = true;
+        this.setState({present: present});
+        this.setState({maxPeople: maxPeople});
     }
 
     quitMeal() {
-        meal = this.props.meal;
+        meal = this.state.meal;
 
         meal.peopleNbr -= 1;
         meal.peoples.splice(meal.peoples.indexOf(firebase.auth().currentUser.uid), 1);
 
         this.db.collection("meal").doc(meal.id).update(meal);
+        this.handleButton(meal);
     }
 
     displayHandle = () => {
@@ -34,7 +60,6 @@ export default class MealEvent extends Component {
         return (
             <View style={{width: "95%", margin: "2%"}}>
                 <TouchableWithoutFeedback onPress={() => this.displayHandle()}>
-                    {/* <ImageBackground imageStyle={{ borderRadius: 25 }} style={{height: 200, width: "100%"}} source={{uri: "https://source.unsplash.com/collection/1353633/200x400"}}> */}
                     <ImageBackground imageStyle={{ borderRadius: 25 }} style={{height: 200, width: "100%"}} source={{uri: this.props.meal.img}}>
                         <Text style={{color: "white", textAlign: "center"}} category="h1">{this.props.meal.name}</Text>
                     </ImageBackground>
@@ -45,34 +70,34 @@ export default class MealEvent extends Component {
                             <View style={{flex:1}}>
                                 <Image
                                     style={{width: 100, height: 100}}
-                                    source={{uri: 'http://api.qrserver.com/v1/create-qr-code/?data=' + this.props.meal.id + '&size=150x150'}} />
+                                    source={{uri: 'http://api.qrserver.com/v1/create-qr-code/?data=' + this.state.meal.id + '&size=150x150'}} />
                             </View>
                             <View style={{flex: 1, flexDirection: 'row-reverse'}}>
-                                <Text category="s1">{this.props.meal.peopleNbr}/{this.props.meal.peopleMax}</Text>
+                                <Text category="s1">{this.state.meal.peopleNbr}/{this.state.meal.peopleMax}</Text>
                                 <Icon name='person' width={25} height={25} fill='gray' />
                             </View>
                         </View>
                         <View style={{marginTop: '2%'}}>
                             <Text  category="s1" appearance='hint'>Description : </Text>
-                            <Text style={{marginLeft: '10%'}}>{ this.props.meal.description}</Text>
+                            <Text style={{marginLeft: '10%'}}>{ this.state.meal.description}</Text>
                         </View>
                         <View style={{marginTop: '2%'}}>
                             <Text  category="s1" appearance='hint'>Price between : </Text>
-                            <Text style={{marginLeft: '10%'}}>{this.props.meal.priceMin.toString() + ' - ' + this.props.meal.priceMax.toString() + '€'}</Text>
+                            <Text style={{marginLeft: '10%'}}>{this.state.meal.priceMin.toString() + ' - ' + this.state.meal.priceMax.toString() + '€'}</Text>
                         </View>
                         <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
                             <Text category="s1" appearance='hint'>Duration : </Text>
-                            <Text>{this.props.meal.duration.toString() + 'min'}</Text>
+                            <Text>{this.state.meal.duration.toString() + 'min'}</Text>
                         </View>
                         <View style={{marginTop: '2%', flexWrap: 'wrap'}}>
                             <Text category="s1" appearance='hint'>Address : </Text>
-                            <Text>{this.props.meal.address}</Text>
+                            <Text>{this.state.meal.address}</Text>
                         </View>
                         <Text>Ingredient :</Text>
                         <View style={{marginTop: '2%', flexDirection: 'row',flexWrap: 'wrap'}}>
                             <Layout style={styles.container2}>
                             {
-                                this.props.meal.ingredient.map((txt, index) => (
+                                this.state.meal.ingredient.map((txt, index) => (
                                     <Layout key={index} level='1' style={styles.layout}>
                                             <Text>
                                                 {txt}
@@ -83,11 +108,11 @@ export default class MealEvent extends Component {
                             </Layout>
                         </View>
                         <Text style={styles.input}>
-                            {"Start at : " + (this.props.meal.startAt.getMonth() + 1) + "/" + this.props.meal.startAt.getDate() +"/"+ this.props.meal.startAt.getFullYear() +" - "+ this.props.meal.startAt.getHours() +":"+ this.props.meal.startAt.getMinutes()}
+                            {"Start at : " + (this.state.meal.startAt.getMonth() + 1) + "/" + this.state.meal.startAt.getDate() +"/"+ this.state.meal.startAt.getFullYear() +" - "+ this.state.meal.startAt.getHours() +":"+ this.state.meal.startAt.getMinutes()}
                         </Text>
                         <View style={{marginTop: '10%'}}>
                         {
-                            this.props.meal.peoples.indexOf(firebase.auth().currentUser.uid) != -1 ?
+                            this.state.present ?
                                 <Button
                                     onPress={() => this.quitMeal()}
                                     style={styles.button}
@@ -96,8 +121,8 @@ export default class MealEvent extends Component {
                                 </Button>
                             :
                                 <Button
-                                    disabled={this.props.meal.peopleNbr >= this.props.meal.peopleMax}
-                                    onPress={() => joinMeal(this.props.meal)}
+                                    disabled={this.state.maxPeople}
+                                    onPress={() => this.handleButton(joinMeal(this.state.meal))}
                                     style={styles.button}
                                     status='info'>
                                     Join meal !

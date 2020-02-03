@@ -5,7 +5,6 @@ import firebase from "firebase/app";
 import MealEvent from '../meal/mealEvent';
 import _ from 'lodash';
 
-
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = _.clone(console);
 console.warn = message => {
@@ -14,10 +13,7 @@ console.warn = message => {
   }
 };
 
-
-const mealImg = require('../../assets/mealEx.jpg');
-
-const searchIcon = (style) => (
+const searchIcon = () => (
   <Icon name="search-outline" width={20} height={20}></Icon>
 )
 export default class Home extends Component {
@@ -25,6 +21,14 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.db = firebase.firestore();
+    this.child = [];
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this.getMeals();
+    });
   }
 
   state = {
@@ -34,10 +38,6 @@ export default class Home extends Component {
     selectedIndex: 1,
     refreshing: false,
     error: false,
-  }
-
-  componentDidMount = () => {
-    this.getMeals();
   }
 
   searchMeal = async () => {
@@ -84,6 +84,9 @@ export default class Home extends Component {
         i++;
       });
       this.setState({meals: meals});
+      this.child.forEach((doc) => {
+        doc.refresh();
+      })
     })
     .catch(err => {
       console.log('Error getting documents', err);
@@ -128,16 +131,16 @@ export default class Home extends Component {
             <Layout style={styles.container}>
               <View>
                 { this.state.meals.length ?
-                  this.state.meals.map((meal) => (
+                  this.state.meals.map((meal, key) => (
                     <View key={meal.id}>
-                      <MealEvent meal={meal}/>
+                      <MealEvent ref={child => this.child[key] = child} meal={meal}/>
                     </View>
                   )) :
                     <View>
                       <Text>No meals registered yet ! Create one !</Text>
                     </View>
                 }
-                    </View>
+              </View>
             </Layout>
           </ScrollView>
       </SafeAreaView>
